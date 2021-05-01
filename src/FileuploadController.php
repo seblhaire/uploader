@@ -13,7 +13,7 @@ class FileuploadController extends \Illuminate\Routing\Controller{
     //put your code here
     public function index(Request $request){
         $validator = \Validator::make($request->all(), [
-            'file' => 'required|mimes:' . config('uploader.acceptable_mimes'),
+            'file' => 'required|mimes:' . config('uploader.acceptable_mimes') . (!is_null(config('uploader.maxfilesizek')) ? '|max:' . config('uploader.maxfilesizek') : ''),
             'path' => 'required|string',
             'filename' => 'string|nullable',
             'storagename' => 'string|nullable',
@@ -23,7 +23,7 @@ class FileuploadController extends \Illuminate\Routing\Controller{
           foreach ($validator->errors()->all() as $message) {
               $erreurs .= $message;
           }
-          return response()->json(['ok' => false, 'msg' => $erreurs]);
+          return response()->json(['ok' => false, 'message' => $erreurs]);
         }else{
             $additionalParams = $request->except(['file', 'path', 'filename', 'storagename', '/fileupload']);
             if ($request->file('file')->isValid()) {
@@ -76,7 +76,7 @@ class FileuploadController extends \Illuminate\Routing\Controller{
                   'size' =>  $file->getSize()
                 ], $additionalParams));
             }else{
-                return response()->json(['ok' => true, 'msg' => 'invalid file']);
+                return response()->json(['ok' => true, 'message' => 'invalid file']);
             }
         }
     }

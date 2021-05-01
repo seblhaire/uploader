@@ -18,3 +18,10 @@
   height:80px;
   margin-left:10px;
 }
+.tooltip-img{
+  max-width:400px;
+  max-height:400px;
+}
+.tooltip-inner {
+  max-width: 405px;
+}

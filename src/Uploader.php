@@ -39,13 +39,17 @@ class Uploader{
 		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setstoragename('" . $storagename . "');";
 	}
 
-	public function addfiletoresults($ext, $url, $content){
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').addfiletoresults('" . $ext . "','" . $url . "','" . $content . "');";
+	public function getresultprocessor(){
+		return "jQuery('#" . $this->uploaderElement . "').data('uploader').getresultprocessor();";
 	}
 
 
 	public function output(){
-    $sStr =  '<div id="' . $this->uploaderElement . '" class="' . $this->aOptions['uploadzoneclass'] . '"></div>' . "\n";
+    $sStr =  '<div id="' . $this->uploaderElement . '" class="' . $this->aOptions['uploadzoneclass'] . '"';
+		if ($this->aOptions['hidden']){
+			$sStr .= ' style="display:none"';
+		}
+		$sStr .= '></div>' . "\n";
 		$sStr .= '<script type="text/javascript">' . "\n";
 		$sStr .= "jQuery(document).ready(function(){\ntry{\n";
 		$sStr .= "jQuery('#" . $this->uploaderElement . "').uploader('" . $this->label . "','" . $this->url;
@@ -61,29 +65,23 @@ class Uploader{
 		$sStr .= "\nuploadicon : '" . $this->aOptions['uploadicon']. "',";
 		$sStr .= "\ndroptext : '" . $this->translateOrPrint($this->aOptions['droptext']) . "',";
 		$sStr .= "\nuploadtext : '" . $this->translateOrPrint($this->aOptions['uploadtext']) . "',";
-		$sStr .= "\nuploadcompletetext : '" . $this->translateOrPrint($this->aOptions['uploadcompletetext']) . "',";
 		$sStr .= "\nprogbarmainclass : '" . $this->aOptions['progbarmainclass']. "',";
 		$sStr .= "\nprogressbarwidth : '" . $this->aOptions['progressbarwidth']. "',";
 		$sStr .= "\nprogressbar : '" . $this->aOptions['progressbar']. "',";
-		$sStr .= "\nfilelistclass : '" . $this->aOptions['filelistclass']. "',";
-		$sStr .= "\nfilelistitem : '" . $this->aOptions['filelistitem']. "',";
+		$sStr .= "\nbuildresultdivfn : " . $this->aOptions['buildresultdivfn']. ",";
 		$sStr .= "\nalerterrorclass : '" . $this->aOptions['alerterrorclass']. "',";
 		$sStr .= "\nalertsuccessclass : '" . $this->aOptions['alertsuccessclass']. "',";
 		$sStr .= "\nalerttimeout : " . $this->aOptions['alerttimeout']. ",";
 		$sStr .= "\ndefaultpath : '" . $this->aOptions['defaultpath']. "',";
 		$sStr .= "\nfailmessage : '" . $this->translateOrPrint($this->aOptions['failmessage']) . "',";
-		$sStr .= "\nfileimagefunction : " . $this->aOptions['fileimagefunction']. ",";
-		$sStr .= "\nfilelistimgspanclass : '" . $this->aOptions['filelistimgspanclass']. "',";
-		$sStr .= "\nfilelistdivclass : '" . $this->aOptions['filelistdivclass']. "'";
-		if (isset($this->aOptions['customresultprocess'])) {
-				$sStr .= ",\ncustomresultprocess : " . $this->aOptions['customresultproces'];
-		}
-		if (isset($this->aOptions['processresultfn'])) {
-				$sStr .= ",\nprocessresultfn : " . $this->aOptions['processresultfn'];
-		}
+		$sStr .= "\nresultclass : " . $this->aOptions['resultclass'];// . "'";
 		if (isset($this->aOptions['errorfn'])) {
 				$sStr .= ",\nerrorfn : " . $this->aOptions['errorfn'];
 		}
+		if (isset($this->aOptions['buildresultdivfn'])) {
+				$sStr .= ",\nbuildresultdivfn : " . $this->aOptions['buildresultdivfn'];
+		}
+
     $sStr .= "\n},{\n";
 		$params = '';
 		foreach($this->additionalParams as $key => $value){

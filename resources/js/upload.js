@@ -1,72 +1,127 @@
-fileimage = function(myclass, ext, url){
-  switch(ext){
-    case 'png':
-    case 'jpg':
-    case 'jpeg':
-    case 'gif':
-        img = jQuery('<img></img>').addClass('media-object').attr('src', url);
-        break;
-    case 'pdf':
-        img = jQuery('<i></i>').addClass('fas fa-file-pdf fa-5x');
-        break;
-    case 'doc':
-    case 'rtf':
-    case 'docx':
-    case 'doc':
-    case 'odt':
-        img = jQuery('<i></i>').addClass('fas fa-file-word fa-5x');
-        break;
-    case 'txt':
-        img = jQuery('<i></i>').addClass('far fa-file-alt fa-5x');
-        break;
-    case 'html':
-    case 'htm':
-    case 'xml':
-        img = jQuery('<i></i>').addClass('fas fa-file-code fa-5x');
-        break;
-    case 'ogg':
-    case 'mp3':
-    case 'aac':
-    case 'raw':
-    case 'flac':
-    case 'au':
-        img = jQuery('<i></i>').addClass('fas fa-file-audio fa-5x');
-        break;
-    case 'zip':
-    case 'gz':
-        img = jQuery('<i></i>').addClass('far fa-file-archive fa-5x');
-        break;
-    case 'xls':
-    case 'ods':
-    case 'csv':
-        img = jQuery('<i></i>').addClass('fas fa-file-excel fa-5x');
-        break;
-    case 'ppt':
-    case 'odp':
-        img = jQuery('<i></i>').addClass('far fa-file-powerpoint fa-5x');
-        break;
-    case 'avi':
-    case 'mov':
-    case 'mpg':
-    case 'mpeg':
-    case 'mpa':
-    case 'asf':
-    case 'wma':
-    case 'mp2':
-        img = jQuery('<i></i>').addClass('far fa-file-video fa-5x');
-        break;
-    default:
-        img = jQuery('<i></i>').addClass('far fa-file fa-5x');
-  }
-  return jQuery('<span></span>').addClass(myclass).append(
-    jQuery('<a></a>').attr('href', url).attr('target', '_blank').append(img)
-  );
+/*Build a div for upload results*/
+builduploadresultdiv = function(divid, filelistid){
+  var filelist = jQuery('<ul></ul>')
+                  .attr('id', filelistid)
+                  .addClass('list-unstyled');
+  return jQuery('<div></div>')
+                  .attr('id', divid)
+                  .append(filelist);
 }
 
+/*Processor to display upload results*/
+UploadresultProcessor = {
+  uploader: null,
+  init: function(uploader){
+    this.uploader = uploader;
+  },
+  dothumbnail: function(ext, url){ // builds a thumbnal with Fontawesome icons or a file
+    var image = false;
+    switch(ext){
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'gif':
+          img = jQuery('<img></img>').addClass('media-object').attr('src', url);
+          image = true;
+          break;
+      case 'pdf':
+          img = jQuery('<i></i>').addClass('fas fa-file-pdf fa-5x');
+          break;
+      case 'doc':
+      case 'rtf':
+      case 'docx':
+      case 'doc':
+      case 'odt':
+          img = jQuery('<i></i>').addClass('fas fa-file-word fa-5x');
+          break;
+      case 'txt':
+          img = jQuery('<i></i>').addClass('far fa-file-alt fa-5x');
+          break;
+      case 'html':
+      case 'htm':
+      case 'xml':
+          img = jQuery('<i></i>').addClass('fas fa-file-code fa-5x');
+          break;
+      case 'ogg':
+      case 'mp3':
+      case 'aac':
+      case 'raw':
+      case 'flac':
+      case 'au':
+          img = jQuery('<i></i>').addClass('fas fa-file-audio fa-5x');
+          break;
+      case 'zip':
+      case 'gz':
+          img = jQuery('<i></i>').addClass('far fa-file-archive fa-5x');
+          break;
+      case 'xls':
+      case 'ods':
+      case 'csv':
+          img = jQuery('<i></i>').addClass('fas fa-file-excel fa-5x');
+          break;
+      case 'ppt':
+      case 'odp':
+          img = jQuery('<i></i>').addClass('far fa-file-powerpoint fa-5x');
+          break;
+      case 'avi':
+      case 'mov':
+      case 'mpg':
+      case 'mpeg':
+      case 'mpa':
+      case 'asf':
+      case 'wma':
+      case 'mp2':
+          img = jQuery('<i></i>').addClass('far fa-file-video fa-5x');
+          break;
+      default:
+          img = jQuery('<i></i>').addClass('far fa-file fa-5x');
+    }
+    if (image){
+     return jQuery('<span></span>')
+        .addClass('mediaspan align-self-start')
+        .tooltip({ html: true, boundary: 'window', title : "<img class=\"tooltip-img\" src=\"" + url + "\"/>" })
+        .append(
+          jQuery('<a></a>').attr('href', url).attr('target', '_blank').append(img)
+        );
+    }else{
+      return jQuery('<span></span>')
+         .addClass('mediaspan align-self-start')
+         .append(
+           jQuery('<a></a>').attr('href', url).attr('target', '_blank').append(img)
+         );
+    }
+  },
+  addfiletolist: function(thumbnail, content){ // insert file in files list
+    var div = jQuery('<div></div>').addClass('media-body').append(content);
+    jQuery('#' + this.uploader.filelistid).append(
+      jQuery('<li></li>')
+          .addClass('media my-4')
+          .append(thumbnail)
+          .append(div)
+    ).show();
+  },
+  process: function(res){ //  process result of file uploader
+    if (res.ok){
+      this.uploader.notify(
+        this.uploader.options.alertsuccessclass,
+        res.filename + ' uploaded'
+      );
+    } else {
+      this.uploader.notify(
+        this.uploader.options.alerterrorclass,
+        res.message
+      );
+    }
+  }
+}
+
+/*builds uploader itself*/
 var Uploader = {
   url: null, // url of function
   div: null,
 	divid: null, //id of table <div>
+  filedivid: null,
+  filelistid: null,
   upform: null,
   alertdiv: null,
   formdiv: null,
@@ -76,7 +131,6 @@ var Uploader = {
   filenameinput: null,
   storageinput: null,
   form: null,
-  filelist: null,
   progressbar: null,
   progressdivmain: null,
   progressbarval: null,
@@ -85,10 +139,13 @@ var Uploader = {
   options: null,
   label: null,
   additionalParams: null,
-  init: function(element, label, url, options, additionalParams) {
+  resultprocessor: null,
+  init: function(element, label, url, options, additionalParams) { // init values
     this.url = url;
     this.div = jQuery(element);
     this.divid = this.div.attr('id');
+    this.filedivid = this.divid +'_filesdiv';
+    this.filelistid = this.divid +'_filelist';
     this.upform = this.divid + '_uploadform';
     this.alertdivid = this.divid + '_alert';
     this.progressid = this.upform + '_progress';
@@ -98,7 +155,7 @@ var Uploader = {
     this.additionalParams = additionalParams;
     this.build();
   },
-  build: function(){
+  build: function(){ // builss uploader
     let self = this;
     let inputCsrf = jQuery('<input/>')
                     .attr('type', 'hidden')
@@ -154,19 +211,11 @@ var Uploader = {
                     .css('width', this.options.progressbarwidth)
                     .addClass(this.options.progbarmainclass)
                     .append(this.progressbar);
-    this.filelist = jQuery('<ul></ul>')
-                    .attr('id', this.upform + '_fileslist')
-                    .addClass(this.options.filelistclass)
-    let filesdiv = jQuery('<div></div>')
-                    .attr('id', this.upform + '_filesdiv')
-                    .append(this.filelist);
     let labeldiv = jQuery('<div/>')
                     .addClass(this.options.divcol)
                     .append(label);
     let buttondiv = jQuery('<div/>')
                     .append(this.button);
-    let droptext = jQuery('<p/>')
-                    .append(this.options.droptext);
     this.formdiv = jQuery('<div/>')
                     .addClass(this.options.divclass)
                     .append(labeldiv)
@@ -176,8 +225,6 @@ var Uploader = {
                     .attr('method', 'post')
                     .attr('enctype', 'multipart/form-data')
                     .attr('id', this.upform)
-                    .addClass(this.options.formclass)
-                    .attr('style', this.options.formstyle)
                     .append(inputCsrf)
                     .append(this.input)
                     .append(this.pathinput)
@@ -188,11 +235,20 @@ var Uploader = {
                     .attr('id', this.alertdivid)
                     .attr('style', 'display:none')
                     .attr('role', 'alert');
-    this.div.append(this.form)
+    if (this.options.draggable){
+      this.div.append(this.form)
                     .append(this.progressdivmain)
-                    .append(droptext)
+                    .append(jQuery('<p/>').append(this.options.droptext))
                     .append(this.alertdiv);
-    filesdiv.insertAfter(this.div);
+    } else {
+      this.div.append(this.form)
+                    .append(this.progressdivmain)
+                    .append(this.alertdiv);
+    }
+    if (this.options.buildresultdivfn != undefined){
+      var filesdiv = this.options.buildresultdivfn(this.filedivid, this.filelistid);
+      filesdiv.insertAfter(this.div);
+    }
     if (this.options.draggable){
       jQuery("html").on("dragover, drop", function(e) { //prevent events
          e.preventDefault();
@@ -221,18 +277,23 @@ var Uploader = {
         self.uploadaction(formData);
       });
     }
+    this.resultprocessor = Object.create(self.options.resultclass);
+    this.resultprocessor.init(this);
   },
-  updateProgress: function(percent){
+  getresultprocessor: function(){ // gets result processor attached to uploader
+    return this.resultprocessor;
+  },
+  updateProgress: function(percent){ // sets progress bar values
     //  this.progressbarval.val(percent);
       this.progressbar.attr('aria-valuenow', percent).css('width', percent +'%');
   },
-  buttonclick: function(e){
+  buttonclick: function(e){  // action for upload button
     e.preventDefault();
     var self = e.data.self;
     self.updateProgress(0);
     self.input.trigger('click');
   },
-  notify: function(alertclass, message){
+  notify: function(alertclass, message){ //notify results in alert div
     this.alertdiv
         .removeClass()
         .addClass(alertclass)
@@ -241,21 +302,21 @@ var Uploader = {
     var self = this;
     var to = setTimeout(function() { self.alertdiv.hide(); }, this.options.alerttimeout);
   },
-  beforeUploadSubmit: function(){
+  beforeUploadSubmit: function(){ //check browser functions
       if (!window.File || !window.FileReader || !window.FileList || !window.Blob){
           alert("Please upgrade your browser, because your current browser lacks some new features we need!");
       }
   },
-  setpath: function(path){
+  setpath: function(path){  //set path values where to upload file
     jQuery(this.pathinput[0]).val(path);
   },
-  setfilename: function(filename){
+  setfilename: function(filename){ //sets new file name after upload
     jQuery(this.filenameinput[0]).val(filename);
   },
-  setstoragename: function(storagename){
+  setstoragename: function(storagename){ //set laravel storage name
     jQuery(this.storageinput[0]).val(storagename);
   },
-  setAdditionalData: function(formData){
+  setAdditionalData: function(formData){ //sets data that can be sent to scripts
     if (self.additionalParams != null) {
       for (key in self.additionalParams){
         formData.append(key, self.additionalParams[key]);
@@ -263,7 +324,7 @@ var Uploader = {
     }
     return formData;
   },
-  doupload: function(e){
+  doupload: function(e){ //prepares data to be sent to file uploader
     var self = e.data.self;
     e.stopPropagation(); // Stop stuff happening
     e.preventDefault(); // T
@@ -273,8 +334,8 @@ var Uploader = {
     formData = self.setAdditionalData(formData);
     self.uploadaction(formData);
   },
-  uploadaction: function(formData){
-    self = this;
+  uploadaction: function(formData){ //send file to upload route
+    var self = this;
     jQuery.ajax({
       url: self.url,
       type: 'POST',
@@ -298,53 +359,20 @@ var Uploader = {
       contentType: false,
       processData: false
     })
-    .done(function(res){
-      if (self.options.customresultprocess != undefined){
-        self.options.customresultprocess(res);
-      }else{
-        if (res.ok){
-          if (self.options.processresultfn != undefined){
-            processresult = self.options.processresultfn(res);
-            if (processresult.ok){
-              self.addfiletoresults(processresult.ext, processresult.url, processresult.message);
-            }else{
-              if (self.options.errorfn != undefined){
-                self.options.errorfn(processresult.message);
-              }else{
-                self.notify(self.options.alerterrorclass, processresult.message);
-              }
-            }
-          }
-        }else{
-          if (self.options.errorfn != undefined){
-            self.options.errorfn(message);
-          }else{
-            self.notify(self.options.alerterrorclass, message);
-          }
-        }
-      }
+    .done(function(res){ //send upload results to result processor
+      self.getresultprocessor().process(res);
     })
-    .fail(function(jqXHR){
+    .fail(function(jqXHR){ //error processing
       if (self.options.errorfn != undefined){
         self.options.errorfn(self.options.failmessage);
       }else{
         self.notify(self.options.alerterrorclass, self.options.failmessage);
       }
     })
-    .always(function(){
+    .always(function(){ // resets progress bar
       self.updateProgress(0);
       var to = setTimeout(function() { self.progressdivmain.hide(); }, 2000);
     })
-  },
-  addfiletoresults: function(ext, url, content){
-    var img = this.options.fileimagefunction(this.options.filelistimgspanclass, ext, url);
-    var div = jQuery('<div></div>').addClass(this.options.filelistdivclass).html(content);
-    this.filelist.append(
-      jQuery('<li></li>')
-          .addClass(this.options.filelistitem)
-          .append(img)
-          .append(div)
-    ).show();
   }
 }
 if (typeof Object.create !== 'function') {
@@ -356,7 +384,7 @@ if (typeof Object.create !== 'function') {
 }
 // table builder function
 (function(jQuery) {
-	/*
+	/* Create plugin
 	@param string url url for uploader
 	@param array cols table columns
 	@params object options
