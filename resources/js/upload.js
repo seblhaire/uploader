@@ -215,6 +215,7 @@ var Uploader = {
                     .addClass(this.options.divcol)
                     .append(label);
     let buttondiv = jQuery('<div/>')
+                    .addClass(this.options.buttondivclass)
                     .append(this.button);
     this.formdiv = jQuery('<div/>')
                     .addClass(this.options.divclass)
@@ -238,7 +239,11 @@ var Uploader = {
     if (this.options.draggable){
       this.div.append(this.form)
                     .append(this.progressdivmain)
-                    .append(jQuery('<p/>').append(this.options.droptext))
+                    .append(
+                      jQuery('<div/>')
+                        .addClass(this.options.droptextclass)
+                        .append(this.options.droptext)
+                    )
                     .append(this.alertdiv);
     } else {
       this.div.append(this.form)

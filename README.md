@@ -9,7 +9,7 @@ A Laravel library to provide file upload utilities. A Javascript library builds 
 It uses:
 
 * a Javascript table builder based on [jQuery](https://jquery.com/) Javascript framework.
-* [Bootstrap](https://getbootstrap.com/) 4 CSS Framework.
+* [Bootstrap](https://getbootstrap.com/) 5 CSS Framework.
 * [FontAwesome](https://fontawesome.com/) icons
 
 ![Uploader example image](uploader.png)
@@ -113,9 +113,11 @@ where:
     * `'uploadzoneclass'`: class of main uploader div. Default `'uploadzone'`.
     * `'acceptable_mimes'`: comma-separated list of file extensions allowed.
     * `'droptext'`:  text to be displayed in drop zone. Text can be string or translation key. Cf [below](#translation_keys).
+    * `'droptextclass'`: class of drop zone text, Default: `'form-text'`.
     * `'divclass'`: class for div containig uploader label and button. Default: `'form-row'`.
     * `'divcol'`: class for column div containing label. Default: `'form-group col-md-2'`.
-    * `'labelclass'`: class for label. Default none.
+    * `'labelclass'`: class for label. Default `'col-form-label'`.
+    * `'buttondivclass'`: class for button div. Default `'col-auto'`
     * `'buttonclass'`:  class of upload button. Default: `'btn btn-dark'`.
     * `'uploadicon'`: FontAwesome classes to define button icon. Default: `"fas fa-upload"`.
     * `'uploadtext'` text of upload button. Text can be string or translation key. Cf [below](#translation_keys).

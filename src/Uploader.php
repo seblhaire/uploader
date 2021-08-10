@@ -60,10 +60,12 @@ class Uploader{
 		$sStr .= "\ndivclass : '" . $this->aOptions['divclass']. "',";
 		$sStr .= "\ndivcol : '" . $this->aOptions['divcol']. "',";
 		$sStr .= "\nlabelclass : '" . $this->aOptions['labelclass'] . "',";
+		$sStr .= "\nbuttondivclass : '" . $this->aOptions['buttondivclass'] . "',";
 		$sStr .= "\nbuttonclass : '" . $this->aOptions['buttonclass']. "',";
 		$sStr .= "\ndraggable : " . ($this->aOptions['draggable'] ? 'true' : 'false') . ",";
 		$sStr .= "\nuploadicon : '" . $this->aOptions['uploadicon']. "',";
 		$sStr .= "\ndroptext : '" . $this->translateOrPrint($this->aOptions['droptext']) . "',";
+		$sStr .= "\ndroptextclass : '" . $this->translateOrPrint($this->aOptions['droptextclass']) . "',";
 		$sStr .= "\nuploadtext : '" . $this->translateOrPrint($this->aOptions['uploadtext']) . "',";
 		$sStr .= "\nprogbarmainclass : '" . $this->aOptions['progbarmainclass']. "',";
 		$sStr .= "\nprogressbarwidth : '" . $this->aOptions['progressbarwidth']. "',";
