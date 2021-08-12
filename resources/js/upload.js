@@ -1,11 +1,7 @@
 /*Build a div for upload results*/
-builduploadresultdiv = function(divid, filelistid){
-  var filelist = jQuery('<ul></ul>')
-                  .attr('id', filelistid)
-                  .addClass('list-unstyled');
+builduploadresultdiv = function(divid){
   return jQuery('<div></div>')
                   .attr('id', divid)
-                  .append(filelist);
 }
 
 /*Processor to display upload results*/
@@ -21,7 +17,7 @@ UploadresultProcessor = {
       case 'jpg':
       case 'jpeg':
       case 'gif':
-          img = jQuery('<img></img>').addClass('media-object').attr('src', url);
+          img = jQuery('<img></img>').addClass('uploadimg').attr('src', url);
           image = true;
           break;
       case 'pdf':
@@ -77,25 +73,25 @@ UploadresultProcessor = {
           img = jQuery('<i></i>').addClass('far fa-file fa-5x');
     }
     if (image){
-     return jQuery('<span></span>')
-        .addClass('mediaspan align-self-start')
+     return jQuery('<div></div>')
+        .addClass('flex-shrink-0 uploadicon')
         .tooltip({ html: true, boundary: 'window', title : "<img class=\"tooltip-img\" src=\"" + url + "\"/>" })
         .append(
           jQuery('<a></a>').attr('href', url).attr('target', '_blank').append(img)
         );
     }else{
-      return jQuery('<span></span>')
-         .addClass('mediaspan align-self-start')
+      return jQuery('<div></div>')
+         .addClass('flex-shrink-0 uploadicon')
          .append(
            jQuery('<a></a>').attr('href', url).attr('target', '_blank').append(img)
          );
     }
   },
   addfiletolist: function(thumbnail, content){ // insert file in files list
-    var div = jQuery('<div></div>').addClass('media-body').append(content);
-    jQuery('#' + this.uploader.filelistid).append(
-      jQuery('<li></li>')
-          .addClass('media my-4')
+    var div = jQuery('<div></div>').addClass('flex-grow-1 ms-3').append(content);
+    jQuery('#' + this.uploader.filedivid).append(
+      jQuery('<div></div>')
+          .addClass('d-flex uploadres')
           .append(thumbnail)
           .append(div)
     ).show();
@@ -121,7 +117,6 @@ var Uploader = {
   div: null,
 	divid: null, //id of table <div>
   filedivid: null,
-  filelistid: null,
   upform: null,
   alertdiv: null,
   formdiv: null,
@@ -145,7 +140,6 @@ var Uploader = {
     this.div = jQuery(element);
     this.divid = this.div.attr('id');
     this.filedivid = this.divid +'_filesdiv';
-    this.filelistid = this.divid +'_filelist';
     this.upform = this.divid + '_uploadform';
     this.alertdivid = this.divid + '_alert';
     this.progressid = this.upform + '_progress';
@@ -251,7 +245,7 @@ var Uploader = {
                     .append(this.alertdiv);
     }
     if (this.options.buildresultdivfn != undefined){
-      var filesdiv = this.options.buildresultdivfn(this.filedivid, this.filelistid);
+      var filesdiv = this.options.buildresultdivfn(this.filedivid);
       filesdiv.insertAfter(this.div);
     }
     if (this.options.draggable){

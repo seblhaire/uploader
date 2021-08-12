@@ -9,14 +9,17 @@
   border: 2px dashed red;
 }
 
-.media img {
+.uploadimg {
   max-width:80px;
   max-height:80px;
 }
-.mediaspan{
+.uploadicon{
   width:80px;
   height:80px;
   margin-left:10px;
+}
+.uploadres{
+  margin-bottom: 8px;
 }
 .tooltip-img{
   max-width:400px;
