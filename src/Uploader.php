@@ -54,7 +54,6 @@ class Uploader{
 		$sStr .= "jQuery(document).ready(function(){\ntry{\n";
 		$sStr .= "jQuery('#" . $this->uploaderElement . "').uploader('" . $this->label . "','" . $this->url;
 		$sStr .= "',{\nacceptable_mimes : '" . $this->aOptions['acceptable_mimes']. "',";
-		$sStr .= "\nformclass : '" . $this->aOptions['formclass']. "',";
 		$sStr .= "\ncsrf : '" . $this->aOptions['csrf']. "',";
 		$sStr .= "\nformstyle : '" . $this->aOptions['formstyle']. "',";
 		$sStr .= "\ndivclass : '" . $this->aOptions['divclass']. "',";
