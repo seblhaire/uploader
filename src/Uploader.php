@@ -31,20 +31,46 @@ class Uploader{
 			}
 	}
 
+<<<<<<< HEAD
 	public function setfilename($filename){
     return "jQuery('#" . $this->uploaderElement . "').data('uploader').setfilename('" . $filename . "');";
   }
 
+=======
+>>>>>>> feature/laravel9
   public function setstoragename($storagename){
 		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setstoragename('" . $storagename . "');";
 	}
 
+<<<<<<< HEAD
+=======
+	public function setmaxsize($size){
+		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setmaxsize(". $size . ");";
+	}
+
+	public function setmimes($mimes){
+		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setmimes('". $mimes . "');";
+	}
+
+	public function setoverwrite($val){
+		if (is_string($val)){
+			$val = $val  == 'true' ? true : false;
+		}
+		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setoverwrite(". (int)$val . ");";
+	}
+
+	public function setfilepattern($pattern){
+		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setfilepattern('". $pattern . "');";
+	}
+
+>>>>>>> feature/laravel9
 	public function getresultprocessor(){
 		return "jQuery('#" . $this->uploaderElement . "').data('uploader').getresultprocessor();";
 	}
 
 
 	public function output(){
+<<<<<<< HEAD
     $sStr =  '<div id="' . $this->uploaderElement . '" class="' . $this->aOptions['uploadzoneclass'] . '"';
 		if ($this->aOptions['hidden']){
 			$sStr .= ' style="display:none"';
@@ -59,6 +85,24 @@ class Uploader{
 		$sStr .= "\ndivcol : '" . $this->aOptions['divcol']. "',";
 		$sStr .= "\nlabelclass : '" . $this->aOptions['labelclass'] . "',";
 		$sStr .= "\nbuttondivclass : '" . $this->aOptions['buttondivclass'] . "',";
+=======
+		$sStr =  '<div id="' . $this->uploaderElement . '" class="' . $this->aOptions['maindiv'] . '">' . PHP_EOL;
+		$sStr .= '<label class="' .  $this->aOptions['labelclass']  . '">' . $this->label . '</label>' . PHP_EOL;
+    $sStr .= '<div id="' . $this->uploaderElement . '-zone" class="' . $this->aOptions['uploadzoneclass'] . '"';
+		if ($this->aOptions['hidden']){
+			$sStr .= ' style="display:none"';
+		}
+		$sStr .= '>';
+		$sStr .= '</div>' . PHP_EOL;
+		$sStr .= '</div>' . PHP_EOL;
+		$sStr .= '<script type="text/javascript">' . "\n";
+		$sStr .= "jQuery(document).ready(function(){\ntry{\n";
+		$sStr .= "jQuery('#" . $this->uploaderElement . "').uploader('" . $this->url;
+		$sStr .= "',{\nacceptable_mimes : '" . $this->aOptions['acceptable_mimes']. "',";
+		$sStr .= "\ncsrf : '" . $this->aOptions['csrf']. "',";
+		$sStr .= "\ncsrfrefreshroute: '" . $this->aOptions['csrfrefreshroute']. "',";
+		$sStr .= "\nmultiple : " . ($this->aOptions['multiple'] ? 'true' : 'false') . ",";
+>>>>>>> feature/laravel9
 		$sStr .= "\nbuttonclass : '" . $this->aOptions['buttonclass']. "',";
 		$sStr .= "\ndraggable : " . ($this->aOptions['draggable'] ? 'true' : 'false') . ",";
 		$sStr .= "\nuploadicon : '" . $this->aOptions['uploadicon']. "',";
@@ -66,6 +110,7 @@ class Uploader{
 		$sStr .= "\ndroptextclass : '" . $this->translateOrPrint($this->aOptions['droptextclass']) . "',";
 		$sStr .= "\nuploadtext : '" . $this->translateOrPrint($this->aOptions['uploadtext']) . "',";
 		$sStr .= "\nprogbarmainclass : '" . $this->aOptions['progbarmainclass']. "',";
+<<<<<<< HEAD
 		$sStr .= "\nprogressbarwidth : '" . $this->aOptions['progressbarwidth']. "',";
 		$sStr .= "\nprogressbar : '" . $this->aOptions['progressbar']. "',";
 		$sStr .= "\nbuildresultdivfn : " . $this->aOptions['buildresultdivfn']. ",";
@@ -73,6 +118,20 @@ class Uploader{
 		$sStr .= "\nalertsuccessclass : '" . $this->aOptions['alertsuccessclass']. "',";
 		$sStr .= "\nalerttimeout : " . $this->aOptions['alerttimeout']. ",";
 		$sStr .= "\ndefaultpath : '" . $this->aOptions['defaultpath']. "',";
+=======
+		$sStr .= "\nprogressbar : '" . $this->aOptions['progressbar']. "',";
+		$sStr .= "\nbuildresultdivfn : " . $this->aOptions['buildresultdivfn']. ",";
+		$sStr .= "\nvalidfeedback : '" . $this->translateOrPrint($this->aOptions['valid-feedback']) . "',";
+		$sStr .= "\ninvalidfeedback : '" . $this->translateOrPrint($this->aOptions['invalid-feedback']) . "',";
+		$sStr .= "\nalerterrorclass : '" . $this->aOptions['alerterrorclass']. "',";
+		$sStr .= "\nalertsuccessclass : '" . $this->aOptions['alertsuccessclass']. "',";
+		$sStr .= "\nalerttimeout : " . $this->aOptions['alerttimeout']. ",";
+		$sStr .= "\npath : '" . $this->aOptions['path']. "',";
+		$sStr .= "\nfilepattern: '" . $this->aOptions['filepattern']. "',";
+	  $sStr .= "\nstoragename: '" . $this->aOptions['storagename']. "',";
+	  $sStr .= "\noverwrite: " . ($this->aOptions['overwrite'] ? 'true' : 'false') . ",";
+	  $sStr .= "\nmaxfilesizek: " . (is_null($this->aOptions['maxfilesizek']) ? 'null' : $this->aOptions['maxfilesizek']) . ",";
+>>>>>>> feature/laravel9
 		$sStr .= "\nfailmessage : '" . $this->translateOrPrint($this->aOptions['failmessage']) . "',";
 		$sStr .= "\nresultclass : " . $this->aOptions['resultclass'];// . "'";
 		if (isset($this->aOptions['errorfn'])) {
