@@ -6,11 +6,12 @@ builduploadresultdiv = function(divid){
 
 /*Processor to display upload results*/
 UploadresultProcessor = {
-  uploader: null,
+  uploader: null, //uploader object
   init: function(uploader){
     this.uploader = uploader;
   },
-  dothumbnail: function(ext, url){ // builds a thumbnal with Fontawesome icons or a file
+  dothumbnail: function(ext, url){
+    // builds a thumbnal with Fontawesome icons or a file
     var image = false;
     switch(ext){
       case 'png':
@@ -87,12 +88,10 @@ UploadresultProcessor = {
          );
     }
   },
-<<<<<<< HEAD
-=======
   countFiles : function(){
+    // counts uploaded files, can be used by form validation
     return jQuery('#' + this.uploader.filedivid).find('input').length;
   },
->>>>>>> feature/laravel9
   addfiletolist: function(thumbnail, content){ // insert file in files list
     var div = jQuery('<div></div>').addClass('flex-grow-1 ms-3').append(content);
     jQuery('#' + this.uploader.filedivid).append(
@@ -104,19 +103,13 @@ UploadresultProcessor = {
   },
   process: function(res){ //  process result of file uploader
     if (res.ok){
-<<<<<<< HEAD
-      this.uploader.notify(
-        this.uploader.options.alertsuccessclass,
-        res.filename + ' uploaded'
-=======
       filenames = '';
-      jQuery.each(res.files, function(i, file) {
+      jQuery.each(res.files, function(i, file) { //processes each uploaded file
         filenames += file.filename + ' ';
       });
       this.uploader.notify(
         this.uploader.options.alertsuccessclass,
         filenames + 'uploaded'
->>>>>>> feature/laravel9
       );
     } else {
       this.uploader.notify(
@@ -131,22 +124,11 @@ UploadresultProcessor = {
 var Uploader = {
   url: null, // url of function
   div: null,
-<<<<<<< HEAD
-=======
   uploaddiv : null,
->>>>>>> feature/laravel9
 	divid: null, //id of table <div>
   filedivid: null,
   upform: null,
   alertdiv: null,
-<<<<<<< HEAD
-  formdiv: null,
-  button: null,
-  input: null,
-  pathinput: null,
-  filenameinput: null,
-  storageinput: null,
-=======
   button: null,
   input: null,
   pathinput: null,
@@ -156,7 +138,6 @@ var Uploader = {
   overwriteinput: null,
   maxsizeinput: null,
   mimesinput: null,
->>>>>>> feature/laravel9
   form: null,
   progressbar: null,
   progressdivmain: null,
@@ -164,15 +145,6 @@ var Uploader = {
   progressval: null,
   progressid: null,
   options: null,
-<<<<<<< HEAD
-  label: null,
-  additionalParams: null,
-  resultprocessor: null,
-  init: function(element, label, url, options, additionalParams) { // init values
-    this.url = url;
-    this.div = jQuery(element);
-    this.divid = this.div.attr('id');
-=======
   path: null,
   filepattern: null,
   storagename: null,
@@ -186,38 +158,23 @@ var Uploader = {
     this.div = jQuery(element);
     this.divid = this.div.attr('id');
     this.uploaddiv = jQuery('#' + this.divid + '-zone');
->>>>>>> feature/laravel9
     this.filedivid = this.divid +'_filesdiv';
     this.upform = this.divid + '_uploadform';
     this.alertdivid = this.divid + '_alert';
     this.progressid = this.upform + '_progress';
     this.progressval = this.upform + '_progressval';
     this.options = options;
-<<<<<<< HEAD
-    this.label = label;
-=======
     this.path = this.options.path;
     this.filepattern = this.options.filepattern;
     this.storagename = this.options.storagename;
     this.overwrite = this.options.overwrite ? 1 : 0;
     this.maxsize = this.options.maxfilesizek;
     this.mimes = this.options.acceptable_mimes;
->>>>>>> feature/laravel9
     this.additionalParams = additionalParams;
     this.build();
   },
   build: function(){ // builss uploader
     let self = this;
-<<<<<<< HEAD
-    let inputCsrf = jQuery('<input/>')
-                    .attr('type', 'hidden')
-                    .attr('name', '_token')
-                    .attr('id', this.upform + '_csrf')
-                    .val(this.options.csrf);
-    this.input = jQuery('<input/>')
-                    .attr('type', 'file')
-                    .attr('name', 'file')
-=======
     this.progressbar = jQuery('<div></div>')
                     .addClass(this.options.progressbar)
                     .attr('id', this.progressid)
@@ -246,36 +203,13 @@ var Uploader = {
                     .attr('type', 'file')
                     .addClass('uploader')
                     .attr('name', this.upform + '_file')
->>>>>>> feature/laravel9
                     .attr('style', 'display:none')
                     .attr('id', this.upform + '_file')
                     .val('')
                     .on('change', { self: this }, this.doupload);
-<<<<<<< HEAD
-    this.pathinput = jQuery('<input/>')
-                    .attr('type', 'text')
-                    .attr('name', 'path')
-                    .attr('style', 'display:none')
-                    .attr('id', this.upform + '_path')
-                    .val(this.options.defaultpath);
-    this.filenameinput = jQuery('<input/>')
-                    .attr('type', 'text')
-                    .attr('name', 'filename')
-                    .attr('style', 'display:none')
-                    .attr('id', this.upform + '_filename');
-    this.storageinput = jQuery('<input/>')
-                    .attr('type', 'text')
-                    .attr('name', 'storagename')
-                    .attr('style', 'display:none')
-                    .attr('id', this.upform + '_storagename');
-    let label = jQuery('<label></label>')
-                    .html(this.label)
-                    .addClass(this.options.labelclass);
-=======
     if (this.options.multiple){
       this.input.attr('multiple', 'multiple');
     }
->>>>>>> feature/laravel9
     this.button = jQuery('<button></button>')
                     .addClass(this.options.buttonclass)
                     .attr('id', this.upform + '_uploadbtn')
@@ -286,57 +220,14 @@ var Uploader = {
                       '<em class="' + this.options.uploadicon +'"></em> ' +
                       this.options.uploadtext
                     );
-<<<<<<< HEAD
-    this.progressbar = jQuery('<div></div>')
-                    .addClass(this.options.progressbar)
-                    .attr('id', this.progressid)
-                    .attr('role', 'progressbar')
-                    .attr('aria-valuenow', "0")
-                    .attr('aria-valuemin', "0")
-                    .attr('aria-valuemax', "100")
-                    .css('width', '0%');
-    this.progressdivmain = jQuery('<div></div>')
-                    .css('display', 'none')
-                    .css('width', this.options.progressbarwidth)
-                    .addClass(this.options.progbarmainclass)
-                    .append(this.progressbar);
-    let labeldiv = jQuery('<div/>')
-                    .addClass(this.options.divcol)
-                    .append(label);
-    let buttondiv = jQuery('<div/>')
-                    .addClass(this.options.buttondivclass)
-                    .append(this.button);
-    this.formdiv = jQuery('<div/>')
-                    .addClass(this.options.divclass)
-                    .append(labeldiv)
-                    .append(buttondiv);
-    this.form = jQuery('<form/>')
-                    .attr('action', this.url)
-                    .attr('method', 'post')
-                    .attr('enctype', 'multipart/form-data')
-                    .attr('id', this.upform)
-                    .append(inputCsrf)
-                    .append(this.input)
-                    .append(this.pathinput)
-                    .append(this.filenameinput)
-                    .append(this.storageinput)
-                    .append(this.formdiv);
-=======
     zone.append(this.input)
       .append(this.button);
->>>>>>> feature/laravel9
     this.alertdiv = jQuery('<div/>')
                     .attr('id', this.alertdivid)
                     .attr('style', 'display:none')
                     .attr('role', 'alert');
-<<<<<<< HEAD
-    if (this.options.draggable){
-      this.div.append(this.form)
-                    .append(this.progressdivmain)
-=======
     if (this.options.draggable == true){
       this.uploaddiv.append(this.progressdivmain)
->>>>>>> feature/laravel9
                     .append(
                       jQuery('<div/>')
                         .addClass(this.options.droptextclass)
@@ -344,17 +235,6 @@ var Uploader = {
                     )
                     .append(this.alertdiv);
     } else {
-<<<<<<< HEAD
-      this.div.append(this.form)
-                    .append(this.progressdivmain)
-                    .append(this.alertdiv);
-    }
-    if (this.options.buildresultdivfn != undefined){
-      var filesdiv = this.options.buildresultdivfn(this.filedivid);
-      filesdiv.insertAfter(this.div);
-    }
-    if (this.options.draggable){
-=======
       this.uploaddiv.append(this.progressdivmain)
                     .append(this.alertdiv);
     }
@@ -369,16 +249,11 @@ var Uploader = {
       filesdiv.insertAfter(this.uploaddiv);
     }
     if (this.options.draggable == true){
->>>>>>> feature/laravel9
       jQuery("html").on("dragover, drop", function(e) { //prevent events
          e.preventDefault();
          e.stopPropagation();
       });
-<<<<<<< HEAD
-      this.div
-=======
       this.uploaddiv
->>>>>>> feature/laravel9
       .on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -392,13 +267,6 @@ var Uploader = {
       .on('drop', function(e) {
         self.progressdivmain.show();
         var formData = new FormData();
-<<<<<<< HEAD
-        formData.append('file', e.originalEvent.dataTransfer.files[0]); //starts onchange envent
-        formData.append('_token', jQuery('#' + self.upform + '_csrf').val());
-        formData.append('path', jQuery(self.pathinput[0]).val());
-        formData.append('filename', jQuery(self.filenameinput[0]).val());
-        formData.append('storagename', jQuery(self.storageinput[0]).val());
-=======
         jQuery.each(e.originalEvent.dataTransfer.files, function(i, file) {
           formData.append('file[]', file);
         });
@@ -408,7 +276,6 @@ var Uploader = {
         formData.append('overwrite', self.overwrite);
         formData.append('maxsize', self.maxsize);
         formData.append('mimes', self.mimes);
->>>>>>> feature/laravel9
         formData = self.setAdditionalData(formData);
         self.uploadaction(formData);
       });
@@ -444,20 +311,6 @@ var Uploader = {
       }
   },
   setpath: function(path){  //set path values where to upload file
-<<<<<<< HEAD
-    jQuery(this.pathinput[0]).val(path);
-  },
-  setfilename: function(filename){ //sets new file name after upload
-    jQuery(this.filenameinput[0]).val(filename);
-  },
-  setstoragename: function(storagename){ //set laravel storage name
-    jQuery(this.storageinput[0]).val(storagename);
-  },
-  setAdditionalData: function(formData){ //sets data that can be sent to scripts
-    if (self.additionalParams != null) {
-      for (key in self.additionalParams){
-        formData.append(key, self.additionalParams[key]);
-=======
     this.path = path;
   },
   setstoragename: function(storagename){ //set laravel storage name
@@ -479,7 +332,6 @@ var Uploader = {
     if (this.additionalParams != null) {
       for (key in this.additionalParams){
         formData.append(key, this.additionalParams[key]);
->>>>>>> feature/laravel9
       }
     }
     return formData;
@@ -489,14 +341,6 @@ var Uploader = {
     e.stopPropagation(); // Stop stuff happening
     e.preventDefault(); // T
     self.progressdivmain.show();
-<<<<<<< HEAD
-    //files = event.target.files;
-    var formData = new FormData(self.form[0]);
-    formData = self.setAdditionalData(formData);
-    self.uploadaction(formData);
-  },
-  uploadaction: function(formData){ //send file to upload route
-=======
     var formData = new FormData();
     jQuery.each(self.input[0].files, function(i, file) {
       formData.append('file[]', file);
@@ -519,20 +363,15 @@ var Uploader = {
     }
 	},
   uploadaction: function(formdata){ //send file to upload route
->>>>>>> feature/laravel9
     var self = this;
     jQuery.ajax({
       url: self.url,
       type: 'POST',
-<<<<<<< HEAD
-      dataType :'json',
-=======
       data: formdata,
       dataType :'json',
       headers: {
         'X-CSRF-Token': self.options.csrf
       },
->>>>>>> feature/laravel9
       xhr: function() { // xhr qui traite la barre de progression
         myXhr = jQuery.ajaxSettings.xhr();
         if(myXhr.upload){ // vérifie si l'upload existe
@@ -546,10 +385,6 @@ var Uploader = {
         return myXhr;
       },
       beforeSend: self.beforeUploadSubmit,
-<<<<<<< HEAD
-      data: formData,
-=======
->>>>>>> feature/laravel9
       //Options signifiant à jQuery de ne pas s'occuper du type de données
       cache: false,
       contentType: false,
@@ -559,15 +394,11 @@ var Uploader = {
       self.getresultprocessor().process(res);
     })
     .fail(function(jqXHR){ //error processing
-<<<<<<< HEAD
-      if (self.options.errorfn != undefined){
-=======
       if (jqXHR.status == 419){
         self.refreshToken();
         self.uploadaction(formdata);
       }
       else if (self.options.errorfn != undefined){
->>>>>>> feature/laravel9
         self.options.errorfn(self.options.failmessage);
       }else{
         self.notify(self.options.alerterrorclass, self.options.failmessage);
@@ -593,22 +424,14 @@ if (typeof Object.create !== 'function') {
 	@param array cols table columns
 	@params object options
 	*/
-<<<<<<< HEAD
-	jQuery.fn.uploader = function(label, url, options, additionalParams)  {
-=======
 	jQuery.fn.uploader = function(url, options, additionalParams)  {
->>>>>>> feature/laravel9
 		return this.each(function() {
 			var element = jQuery(this);
 			if (element.prop('tagName') != 'DIV') throw 'not a DIV';
 			// Return early if this element already has a plugin instance
 			if (element.data('uploader')) return element.data('uploader');
 			var uploader = Object.create(Uploader);
-<<<<<<< HEAD
-			uploader.init(this, label, url, options, additionalParams);
-=======
 			uploader.init(this, url, options, additionalParams);
->>>>>>> feature/laravel9
 			// pass options to plugin constructor
 			element.data('uploader', uploader);
 		});

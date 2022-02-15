@@ -108,14 +108,14 @@ where:
 * `$label`: field label for uploader
 * `$url`: route that must be used to upload file. Cf [below](#controller).
 * `$options`: array of options.
+    *  `'multiple'` : users can upload several files. Default `false`.
+    * `'maindiv'` ; div class for main div. Default: `'mb-3'`.
     * `'draggable'`: sets drag and drop option. Default `true`.
     * `'hidden'`: hide uploader at beginning. Default `false`.
     * `'uploadzoneclass'`: class of main uploader div. Default `'uploadzone'`.
     * `'acceptable_mimes'`: comma-separated list of file extensions allowed.
     * `'droptext'`:  text to be displayed in drop zone. Text can be string or translation key. Cf [below](#translation_keys).
     * `'droptextclass'`: class of drop zone text, Default: `'form-text'`.
-    * `'divclass'`: class for div containig uploader label and button. Default: `'form-row'`.
-    * `'divcol'`: class for column div containing label. Default: `'form-group col-md-2'`.
     * `'labelclass'`: class for label. Default `'col-form-label'`.
     * `'buttondivclass'`: class for button div. Default `'col-auto'`
     * `'buttonclass'`:  class of upload button. Default: `'btn btn-dark'`.
@@ -128,11 +128,15 @@ where:
     * `'alerterrorclass'`: class for alert div displayed in case of failure. Default: `'alert alert-danger'`.
     * `'alertsuccessclass'`: class for alert div in case of success- Default: `'alert alert-success'`.
     * `'alerttimeout'`: time in milliseconds before alert div is hidden. Default: 10000.
-    * `'defaultpath'`: default path where to upload files. Cf [below](#controller).  Default: `"/"`.
+    * `'path'`: default path where to upload files. Cf [below](#controller).  Default: `"/"`.
+    * `'filepattern'` : name pattern that will replace original file name. Default `''`.
+    * `'storagename'` : storage name, cf function `setstoragename` below.
+    * `'overwrite'` : files with same name will be overwritten. Default `true`. If false, a new file name will be automatically created.
+    * `'maxfilesizek'`: max file size in kilobytes. Default: `null`.
     * `'resultclass'`: upload result processor class. Cf [below](#uploader_result_class), Default: `'UploadresultProcessor'`.
     * `'errorfn'`: function to process  file upload error if you don't want to use default one. Function name or null. Default `null`.
     * `'buildresultdivfn'`: function to build div where to display upload results. Cf [below](#result_div_builder). Default: `'builduploadresultdiv'`.
-    * `'maxfilesizek'`: max file size in kilobytes. Default: `null`.
+    * `'csrfrefreshroute'`: route to a function that refreshes csrf token.
 * `$additionalParams`: array of parameters to be sent to routes.
 
 Uploader sends data to a controller (see [below](#controller)) which accepts parameters to set filename, file systems storage name and file path. Since these values are usually set dynamically, Uploader Javascript object provides methods to set them;  the PHP object built by our Facade provides methods to insert Javascript code properly, for instance in Ajax scripts.
@@ -145,17 +149,34 @@ Uploader sends data to a controller (see [below](#controller)) which accepts par
 
 Find further explanation [here](#controller) and usage example [here](#summary).
 
-### Set file name
+### Set file pattern
 
-`setfilename($filename)`
+`setfilepattern($filename)`
 
- Name is self explaining. Find further explanation [here](#controller) and usage example [here](#summary).
+ Define a pattern to build file names for uploaded files that replace original file name. Find further explanation [here](#controller) and usage example [here](#summary).
 
 ### Set file system storage name
 
 `setstoragename($storagename)`
 
 Uploader uses [Laravel file system](https://laravel.com/docs/master/filesystem). `$storagename` must be one of the storage names stored of your application `config/filesystems.php`.  Find further explanation [here](#controller) and usage example [here](#summary).
+
+### Set maximumum file site
+
+`setmaxsize($size)`
+
+Defines a maximum file size in KB.
+
+### Set accepted file types
+
+`setmimes($mimes)`
+
+Accepts a string of accepted, comma-separated, file extensions.
+
+### Set overwrite permission
+`setoverwrite($val)`
+
+Defines if we overwrite file if a file with same name already exists in upload directory. Accepts boolean variable or string `'true'` or `'false'`.
 
 ### Get result processor
 `getresultprocessor()`
@@ -194,7 +215,7 @@ jQuery(document).ready(function(){
   {!! $uploader->setpath('/uploads') .
   $uploader->setstoragename('public'); !!}
   var proc = {!! $uploader4->getresultprocessor() !!}
-  proc.preparedisplay({filename: 'seb.jpg', ext: 'jpg'});
+  proc.preparedisplay({filename: 'seb.jpg', ext: 'jpg'}, 1);
 });
 ```
 
@@ -226,25 +247,31 @@ Mandatory class properties and function are:
 * method `process(res)`: this function is called to process upload result. In `UploadresultProcessor` it is defined as follows:
 ```
 process: function(res){ //  process result of file uploader
-    if (res.ok){
-      this.uploader.notify(
-        this.uploader.options.alertsuccessclass,
-        res.filename + ' uploaded'
-      );
-    } else {
-      this.uploader.notify(
-        this.uploader.options.alerterrorclass,
-        res.message
-      );
-    }
+  if (res.ok){
+    filenames = '';
+    jQuery.each(res.files, function(i, file) { //processes each uploaded file
+      filenames += file.filename + ' ';
+    });
+    this.uploader.notify(
+      this.uploader.options.alertsuccessclass,
+      filenames + 'uploaded'
+    );
+  } else {
+    this.uploader.notify(
+      this.uploader.options.alerterrorclass,
+      res.message
+    );
+  }
 }
 ```
 It uses `res.ok` variable returned by uploader. Note that you can use the uploader `notify` that sets the alert div set in uploader div.  
 
-`UploadresultProcessor` has two other methods that you can use with the standard  [result div](#result_div_builder) as in image shown at this document beginning.
+`UploadresultProcessor` has other methods that you can use with the standard  [result div](#result_div_builder) as in image shown at this document beginning.
 
 * `dothumbnail(ext, url)`: builds either a FontAwesome image corresponding to file extension `ext` or a thumbnail of uploaded image. `url` is the url image on your website. If file is an image, if mouse goes over thumbnail, a greater version of image is displayed in a tooltip. Method returns a jQuery object.
 * `addfiletolist(thumbnail, content)`: insert a new file in list. `thumbnail` is a jQuery object returned by `dothumbnail` method. `content` is another jQuery object that contains for instance filename and other things.
+* `countFiles()`: counts uploaded files, can be used by form validation.
+
 
 ### Class extension
 
@@ -272,32 +299,74 @@ Further examples can be found [here](https://github.com/seblhaire/demoseb/blob/m
 
 ## Controller
 
-Uploader package comes with a upload controller that simply uploads a file. The file  is stored using [Laravel file storage system](https://laravel.com/docs/master/filesystem). It can be stored for instance in public folder to be used in website or in storage system for other purposes.
+Uploader package comes with helpers that help you build your controller methods easily. We use [Laravel file storage system](https://laravel.com/docs/master/filesystem). Files can be stored for instance in public folder to be used in website or in storage system for other purposes.
 
-Four parameters must be sent by file uploader:
+Further examples can be found [here](https://github.com/seblhaire/demoseb/blob/master/app/Http/Controllers/FileUploadController.php).
 
-* `file`: file object transmitted by file uploader, which has useful functions:
-   * `getClientOriginalName()`: returns original name;
-   * `getMimeType()`: returns file MimeType;
-   * `getSize()`: returns file size;
-* `storagename`: storage name defined in `config/filesystems.php` (cf [Laravel file storage system](https://laravel.com/docs/master/filesystem)). If null, filesystem is `default`.
-* `path`: path in fileystem, can be empty string.
-* `filename`:  file name for uploaded file:
-   * if a name is provided it will replace original file name; if file already exists on target
-     directory, file will be overwritten;
-   * if empty, original file name will be used; if file already exists on target, a new
-     file name will be generated.
 
-In most cases, you will need further processing for file. You might for instance store
-information into tables. In this case, you can either:
+### Validation rules
 
-* use your own upload function more or less based on the version in package;
-* or use a second process that can be called after the file is uploaded.
+We have built two Laravel validation rules that are useful for our uploader.
 
-If you want to use package controller, simply add the following to your routes. You can  
-chose any path and any route name.
+* `FiletypeRule` verifies that uploaded files belong to the allowed file types.
+* `FilesizeRule` verifies that uploaded files size don't exceed maximum file size defined for our uploader.
 
-`Route::post('/fileupload', [Seblhaire\Uploader\FileuploadController::class, 'index'])->name('fileupload');`
+`FileuploadRequest` is a custom request validation rule that verify our uploader fields. It can extended if you need to validate your additional parameters:
+
+```
+namespace App\Http\Requests;
+
+use Seblhaire\Uploader\FileuploadRequest;
+
+class Fileupload2Request extends FileuploadRequest
+{
+
+    public function rules()
+    {
+        return array_merge(parent::rules(), [
+          'article_title' => "required|string",
+          'article_id' => "required|numeric"
+        ]);
+    }
+}
+```
+
+### Protected trait functions
+
+We have defined protected methods in `UploaderTrait` that can be used in your controller as follows.
+
+```
+use Seblhaire\Uploader\UploaderTrait;
+
+class FileUploadController extends Controller
+{
+  use UploaderTrait;
+  ...
+```
+
+#### buildFileObj($filename)
+
+Builds a simple `stdClass` object from file name with fields `name` and `ext`
+that will be used by other functions in trait.
+
+#### buildUniqueFileName($disk, $path, $fileobj, $separator = '-')
+
+This function builds an unique file name in upload directory.
+
+
+#### cleanFileName($filename)
+
+Remove accentuated characters abd white spaces from file name.
+
+#### getPath($request)
+
+Returns file path defined from default config files or from uploader parameters.
+
+#### getDisk($request, $path)
+
+Return storage name either from default config files or from uploder parameters and
+creates directory from path.
+
 
 ## Translation keys
 
