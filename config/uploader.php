@@ -2,36 +2,12 @@
 return [
   'draggable' => true,
   'hidden' => false,
-<<<<<<< HEAD
-=======
   'multiple' => false,
   'maindiv' => 'mb-3',
->>>>>>> feature/laravel9
   'uploadzoneclass' => 'uploadzone',
   'acceptable_mimes' => 'png,jpg,jpeg,gif,doc,rtf,docx,doc,pdf,txt,htm,html,odt,ogg,mp3,aac,raw,flac,au,zip,gz,xls,ods,csv,ppt,odp,avi,mov,mpg,mpeg,mpa,asf,wma,mp2',
   'droptext' => '#uploader::messages.droptext#',
   'droptextclass' => 'form-text',
-<<<<<<< HEAD
-  'divclass' => 'row g-3',
-  'divcol' => 'col-sm-2',
-  'labelclass' => 'col-form-label',
-  'buttondivclass' => 'col-auto',
-  'buttonclass' => 'btn btn-dark',
-  'uploadicon' => "fas fa-upload",
-  'uploadtext' => "#uploader::messages.uploadtext#",
-  'progbarmainclass' => "progress",
-  'progressbarwidth' => '40%',
-  "progressbar" => "progress-bar progress-bar-striped progress-bar-animated",
-  'failmessage' => "#uploader::messages.failmessage#",
-  'alerterrorclass' => 'alert alert-danger',
-  'alertsuccessclass' => 'alert alert-success',
-  'alerttimeout' => 10000,
-  'defaultpath' => "/",
-  'resultclass' => 'UploadresultProcessor',
-  'errorfn' => null,
-  'buildresultdivfn' => 'builduploadresultdiv',
-  'maxfilesizek' => null,
-=======
   'labelclass' => 'form-label',
   'buttonclass' => 'btn btn-dark',
   'uploadicon' => "fas fa-upload",
@@ -53,5 +29,4 @@ return [
   'errorfn' => null,
   'buildresultdivfn' => 'builduploadresultdiv',
   'csrfrefreshroute' => null
->>>>>>> feature/laravel9
 ];
