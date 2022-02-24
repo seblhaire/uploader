@@ -161,7 +161,7 @@ Find further explanation [here](#controller) and usage example [here](#summary).
 
 Uploader uses [Laravel file system](https://laravel.com/docs/master/filesystem). `$storagename` must be one of the storage names stored of your application `config/filesystems.php`.  Find further explanation [here](#controller) and usage example [here](#summary).
 
-### Set maximumum file site
+### Set maximum file site
 
 `setmaxsize($size)`
 
