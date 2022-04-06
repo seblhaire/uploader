@@ -173,6 +173,10 @@ var Uploader = {
     this.additionalParams = additionalParams;
     this.build();
   },
+  reset : function(){
+    this.uploaddiv.show();
+    jQuery('#' + this.filedivid).html('');
+  },
   build: function(){ // builss uploader
     let self = this;
     this.progressbar = jQuery('<div></div>')
