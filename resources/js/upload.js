@@ -100,6 +100,9 @@ UploadresultProcessor = {
           .append(thumbnail)
           .append(div)
     ).show();
+    if (!this.uploader.options.multiple){
+      this.uploader.uploaddiv.hide()
+    }
   },
   process: function(res){ //  process result of file uploader
     if (res.ok){
@@ -111,6 +114,9 @@ UploadresultProcessor = {
         this.uploader.options.alertsuccessclass,
         filenames + 'uploaded'
       );
+      if (!this.uploader.options.multiple){
+        this.uploader.uploaddiv.hide()
+      }
     } else {
       this.uploader.notify(
         this.uploader.options.alerterrorclass,
@@ -201,7 +207,6 @@ var Uploader = {
                     .attr('enctype', 'multipart/form-data')
                     .attr('id', this.upform);
         this.uploaddiv.append(zone);
-
     }
     this.input = jQuery('<input/>')
                     .attr('type', 'file')
