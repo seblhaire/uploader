@@ -48,7 +48,7 @@ $ php artisan storage:link
 
 ## Javascript and stylesheets
 
-On a webpage, every JS library and CSS stylesheets can be linked separately. If you choose this classical way, first dowload and install above mentionned libraries or use Content Delivery Network (CDN) links as in the example page in last section. Then publish package files as explained above and put following tags in your template:
+On a webpage, every JS library and CSS stylesheets can be linked separately. If you choose this classical way, first dowload and install above mentionned libraries. Then publish package files as explained above and put following tags in your template:
 
 ```html
 <script type="text/javascript" src="js/vendor/seblhaire/uploader/upload.js"></script>
@@ -373,3 +373,7 @@ creates directory from path.
 Laravel loads config files very early in process. Therefore config files cannot contain `__('translation.key')`. In order to solve this issue, we made an helper either to print directly strings or to send translation key to translation helper. Translation keys can be delimited by character \# . Ex: `"uploader::messages.uploadtext"`. Original translations are stored under `vendor/seblhaire/uploader/resources/lang`. If you publish package files, you can find translations in `resources/lang/vendor/uploader/`.
 
 Feel free to translate keys in your own language and either to send it to the author or to do a merge request on GitHub.
+
+# Questions? Contributions?
+
+Feel free to send feature requests or merge request to the author or simply to ask questions.
