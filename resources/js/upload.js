@@ -110,13 +110,15 @@ UploadresultProcessor = {
       jQuery.each(res.files, function(i, file) { //processes each uploaded file
         filenames += file.filename + ' ';
       });
+      hide = false;
+      if (!this.uploader.options.multiple){
+        hide = true
+      }
       this.uploader.notify(
         this.uploader.options.alertsuccessclass,
-        filenames + 'uploaded'
+        filenames + 'uploaded',
+        hide
       );
-      if (!this.uploader.options.multiple){
-        this.uploader.uploaddiv.hide()
-      }
     } else {
       this.uploader.notify(
         this.uploader.options.alerterrorclass,
@@ -305,14 +307,20 @@ var Uploader = {
     self.updateProgress(0);
     self.input.trigger('click');
   },
-  notify: function(alertclass, message){ //notify results in alert div
+  notify: function(alertclass, message, hide){ //notify results in alert div
+    if (hide == undefined) hide = false;
     this.alertdiv
         .removeClass()
         .addClass(alertclass)
         .html(message)
         .show();
     var self = this;
-    var to = setTimeout(function() { self.alertdiv.hide(); }, this.options.alerttimeout);
+    var to = setTimeout(function() {
+      self.alertdiv.hide();
+      if (hide){
+        self.uploaddiv.hide();
+      }
+    }, this.options.alerttimeout);
   },
   beforeUploadSubmit: function(){ //check browser functions
       if (!window.File || !window.FileReader || !window.FileList || !window.Blob){
