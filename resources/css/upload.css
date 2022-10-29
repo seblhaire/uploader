@@ -4,7 +4,10 @@
   border: 1px dotted lightgrey;
   padding: 15px;
 }
-
+.uploadresdiv{
+  padding-left: 15px;
+  padding-right: 15px;
+}
 .targetted{
   border: 2px dashed red;
 }

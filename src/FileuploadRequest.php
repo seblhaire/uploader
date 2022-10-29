@@ -28,7 +28,7 @@ class FileuploadRequest extends FormRequest
           'path' => 'string|nullable',
           'storagename' => 'string|nullable',
           'filepattern' => 'string|nullable',
-          'overwrite' => 'boolean',
+          'rename' => 'boolean',
           'maxsize' =>  'integer',
           'mimes' => 'string'
         ];

@@ -70,7 +70,9 @@ window.$ = $;
 window.jQuery = jQuery;
 require('bootstrap');
 require('../../vendor/seblhaire/uploader/resources/js/uploader.js');
+require('../../vendor/seblhaire/uploader/resources/js/UploadedFileContainerExt.js');
 ```
+`UploadedFileContainerExt` is optional, since you can write your own result processor and your own file container.
 
 For your stylesheet:
 
@@ -131,12 +133,19 @@ where:
     * `'path'`: default path where to upload files. Cf [below](#controller).  Default: `"/"`.
     * `'filepattern'` : name pattern that will replace original file name. Default `''`.
     * `'storagename'` : storage name, cf function `setstoragename` below.
-    * `'overwrite'` : files with same name will be overwritten. Default `true`. If false, a new file name will be automatically created.
+    * `'rename'` : if a file with same name already exists, current file will be renamed. Default `false`.
     * `'maxfilesizek'`: max file size in kilobytes. Default: `null`.
-    * `'resultclass'`: upload result processor class. Cf [below](#uploader_result_class), Default: `'UploadresultProcessor'`.
+    * `'resultprocessor'`: upload result processor class. Cf [below](#uploader_result_class), Default: `'UploadresultProcessor'`.
+    * `'filecontainer'` : file container class.  Cf [below](#uploader_result_class), Default: `'UploadedFileContainer'`.
+    * `'filecontainerclass'` : file container class. Default: `'d-flex uploadres'`.
     * `'errorfn'`: function to process  file upload error if you don't want to use default one. Function name or null. Default `null`.
-    * `'buildresultdivfn'`: function to build div where to display upload results. Cf [below](#result_div_builder). Default: `'builduploadresultdiv'`.
+    *  `'resultdivclass'` : class of file list container. Default: `'uploadresdiv'`-
     * `'csrfrefreshroute'`: route to a function that refreshes csrf token.
+    * `'delurl'`: route to file delete controller function that can be called in file results. Default: `null`.
+    * `'resultbaseurl'`: base url used to build urls. Default: `null`.
+    * `'additionalparamsfn'`: function that adds parameters to upload function. Default: `null`.
+    * `'delete'`: file delete confirmation text. Text can be string or translation key. Cf [below](#translation_keys).
+    * `'afteruploadfn'`: callback function called after files have been uploaded:  Default: `null`.
 * `$additionalParams`: array of parameters to be sent to routes.
 
 Uploader sends data to a controller (see [below](#controller)) which accepts parameters to set filename, file systems storage name and file path. Since these values are usually set dynamically, Uploader Javascript object provides methods to set them;  the PHP object built by our Facade provides methods to insert Javascript code properly, for instance in Ajax scripts.
@@ -173,10 +182,10 @@ Defines a maximum file size in KB.
 
 Accepts a string of accepted, comma-separated, file extensions.
 
-### Set overwrite permission
-`setoverwrite($val)`
+### Set rename permission
+`setrename($val)`
 
-Defines if we overwrite file if a file with same name already exists in upload directory. Accepts boolean variable or string `'true'` or `'false'`.
+Defines if we rename current file if a file with same name already exists in upload directory. Accepts boolean variable or string `'true'` or `'false'`.
 
 ### Get result processor
 `getresultprocessor()`
@@ -196,7 +205,7 @@ $uploader = UploaderHelper::init(
   'Uploader',
   route('fileupload'),
   [
-    'resultclass' => 'UploaderResult'
+    'filecontainer' => 'UploadedFileContainerExt'
   ], [ // additional parameters transmitted to second script
     'article_title' => "l'ami",
     'article_id' => 40
@@ -219,83 +228,33 @@ jQuery(document).ready(function(){
 });
 ```
 
-## Result div builder
-Since Uploader is highly customizable, it calls a function to build results zone below uploader div. File `resources/js/upload.js` contains the following function that is called by default;
-
-```
-builduploadresultdiv = function(divid, filelistid){
-  var filelist = jQuery('<ul></ul>')
-                  .attr('id', filelistid)
-                  .addClass('list-unstyled');
-  return jQuery('<div></div>')
-                  .attr('id', divid)
-                  .append(filelist);
-}
-```
-
-`divid` and `filelistid` are element id that are defined in Uploader javascript object. If you wish to use another function, you need define a new function that returns a jQuery element  and set option `buildresultdivfn`. In your uploader result class (see next section) you will need to use `divid` and `filelistid` to insert your results in div.
-
 ## Uploader result class
 
 File processing depends strongly on your web app purposes. Therefore it is impossible to provide a complete uploader package that satisfies all needs. We provide useful functions instead.
 
-Uploader uses a result class to deal with upload results returned by controller. Package contains a base result class `UploadresultProcessor` stored in `resources/js/upload.js` that can be replaced or extended. You can define your own result class that replaces or extends `UploadresultProcessor` ,
+Uploader uses a result class to deal with upload results returned by controller. Package contains a result class `UploadresultProcessor` stored in `resources/js/upload.js` that can be replaced or extended.
 
 Mandatory class properties and function are:
 * property `uploader`. This links a result class instance to its corresponding uploader instance.
+* property `filelist`. Contains uploaded files.
 * method `init(uploader)`. It is called by uploader after instance creation in order to set `uploader` property.
-* method `process(res)`: this function is called to process upload result. In `UploadresultProcessor` it is defined as follows:
-```
-process: function(res){ //  process result of file uploader
-  if (res.ok){
-    filenames = '';
-    jQuery.each(res.files, function(i, file) { //processes each uploaded file
-      filenames += file.filename + ' ';
-    });
-    this.uploader.notify(
-      this.uploader.options.alertsuccessclass,
-      filenames + 'uploaded'
-    );
-  } else {
-    this.uploader.notify(
-      this.uploader.options.alerterrorclass,
-      res.message
-    );
-  }
-}
-```
-It uses `res.ok` variable returned by uploader. Note that you can use the uploader `notify` that sets the alert div set in uploader div.  
+* method `process(res)`: this function is called to process upload result. For each uploaded file, it creates a file container class instance (cf. below) and adds file to `filelist` property. If result contains an error, error is displayed in a alert `<div>`.
+* method `buildresdiv(id, myclass)` builds a `<div>` to contain file list.
 
-`UploadresultProcessor` has other methods that you can use with the standard  [result div](#result_div_builder) as in image shown at this document beginning.
+A file container is a class that builds a `<div>` inside the file list `<div>`. Class name is defined in uploader parameter `filecontainer`. It must have following methods:
 
-* `dothumbnail(ext, url)`: builds either a FontAwesome image corresponding to file extension `ext` or a thumbnail of uploaded image. `url` is the url image on your website. If file is an image, if mouse goes over thumbnail, a greater version of image is displayed in a tooltip. Method returns a jQuery object.
-* `addfiletolist(thumbnail, content)`: insert a new file in list. `thumbnail` is a jQuery object returned by `dothumbnail` method. `content` is another jQuery object that contains for instance filename and other things.
-* `countFiles()`: counts uploaded files, can be used by form validation.
+* method `init(processor)` inits class. It links it to file processor (and therefore to uploader) and inits a property `idx` which contains file index in file procesor `filelist`.
+* method `build(file, info)` constructs the `<div>` and adds info from `file` parameter. `info` contains general information, such as base url.
 
+In `resources/js/upload.js`, you can find file container `UploadedFileContainer` which is used by default by our uploader. It builds a very simple container with basic file information. We have also added a url buiding utilty `buildurl(file, info)` which can be used in your own class extension. File url are built following these rules:
 
-### Class extension
+* If the file object returned by file upload route contains a parameter `url`, we return this value.
+* If general information in parameter `info` contains a `baseurl` value, we build the file url with this value.
+* If property `baseurl` is defined in file processor instance, we build the file url with this value.
+* If option `baseurl` is defined in uploader parameters, we build the file url with this value.
 
-Base class provides only base functions and you can easily write your own result processing functions. All you need is to write a class with a `process` method, to extend base class and to init uploader replacing `resultclass` with your class name.
-
-Your class extension can be in a js file or placed between `<script type="text/javascript"></script>` in your view.
-```
-UploaderResult = {
-  process: function(result){
-    if (result.ok){
-	var thumb = this.dothumbnail(res.ext, url);
-        var content = jQuery('<div></div>')
-           .append(jQuery('<h5></h5').addClass('mt-0 mb-1').html(res.filename));
-	this.addfiletolist(thumb, content);
-...
-  }
-}
-```
-In this example, we use methods `dothumbnail` and `addfiletolist`. You can also call an Ajax script to store for instance files in databases or whatever you want.
-
-Finally extend base class:
-`UploaderResult = jQuery.extend({}, UploadresultProcessor, UploaderResult);`
-
-Further examples can be found [here](https://github.com/seblhaire/demoseb/blob/master/resources/views/uploader.blade.php).
+In `resources/js/UploadedFileContainerExt.js` we define class `UploadedFileContainerExt` which extends `UploadedFileContainer` and builds a nice file container, with image
+thumbnail and provides other functionalities, such as file url copy and file delete processor that calls route defined in uploader parameter `delurl` removing file in file result container `filelist`.
 
 ## Controller
 

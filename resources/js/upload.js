@@ -1,139 +1,94 @@
-/*Build a div for upload results*/
-builduploadresultdiv = function(divid){
-  return jQuery('<div></div>')
-                  .attr('id', divid)
+/*Processor to display upload results*/
+UploadedFileContainer = {
+  processor: null,
+  idx : null,
+  init: function(processor){
+    this.processor = processor;
+    this.idx = this.processor.uploader.fileidx;
+  },
+  build: function(file, info){
+    link = jQuery('<a></a>')
+        .attr('href', this.buildurl(file, info))
+        .attr('target', '_blank')
+        .html(file.filename);
+    return this.builddiv(this.idx)
+        .html('#' + file.file_id + '&nbsp;')
+        .append(link);
+  },
+  builddiv: function(idx){
+    return jQuery('<div></div>')
+        .attr('id', this.processor.uploader.filedivid + '_file_' + idx)
+        .addClass(this.processor.uploader.options.filecontainerclass);
+  },
+  buildurl: function(file, info){
+    if (file.url != undefined){
+      return file.url;
+    }else{
+      if (info != undefined && info.baseurl != undefined && info.baseurl != null){
+        return info.baseurl + file.filename;
+      }else if (this.processor.baseurl != undefined && this.processor.baseurl != null){
+        return this.processor.baseurl + file.filename;
+      }else if (this.processor.uploader.options.resultbaseurl != undefined && this.processor.uploader.options.resultbaseurl != null){
+        return this.processor.uploader.options.resultbaseurl + file.filename;
+      }
+    }
+  }
 }
 
-/*Processor to display upload results*/
 UploadresultProcessor = {
   uploader: null, //uploader object
+  filelist: null,
   init: function(uploader){
     this.uploader = uploader;
+    this.filelist = [];
   },
-  dothumbnail: function(ext, url){
-    // builds a thumbnal with Fontawesome icons or a file
-    var image = false;
-    switch(ext){
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
-          img = jQuery('<img></img>').addClass('uploadimg').attr('src', url);
-          image = true;
-          break;
-      case 'pdf':
-          img = jQuery('<i></i>').addClass('fas fa-file-pdf fa-5x');
-          break;
-      case 'doc':
-      case 'rtf':
-      case 'docx':
-      case 'doc':
-      case 'odt':
-          img = jQuery('<i></i>').addClass('fas fa-file-word fa-5x');
-          break;
-      case 'txt':
-          img = jQuery('<i></i>').addClass('far fa-file-alt fa-5x');
-          break;
-      case 'html':
-      case 'htm':
-      case 'xml':
-          img = jQuery('<i></i>').addClass('fas fa-file-code fa-5x');
-          break;
-      case 'ogg':
-      case 'mp3':
-      case 'aac':
-      case 'raw':
-      case 'flac':
-      case 'au':
-          img = jQuery('<i></i>').addClass('fas fa-file-audio fa-5x');
-          break;
-      case 'zip':
-      case 'gz':
-          img = jQuery('<i></i>').addClass('far fa-file-archive fa-5x');
-          break;
-      case 'xls':
-      case 'ods':
-      case 'csv':
-          img = jQuery('<i></i>').addClass('fas fa-file-excel fa-5x');
-          break;
-      case 'ppt':
-      case 'odp':
-          img = jQuery('<i></i>').addClass('far fa-file-powerpoint fa-5x');
-          break;
-      case 'avi':
-      case 'mov':
-      case 'mpg':
-      case 'mpeg':
-      case 'mpa':
-      case 'asf':
-      case 'wma':
-      case 'mp2':
-          img = jQuery('<i></i>').addClass('far fa-file-video fa-5x');
-          break;
-      default:
-          img = jQuery('<i></i>').addClass('far fa-file fa-5x');
-    }
-    if (image){
-     return jQuery('<div></div>')
-        .addClass('flex-shrink-0 uploadicon')
-        .tooltip({ html: true, boundary: 'window', title : "<img class=\"tooltip-img\" src=\"" + url + "\"/>" })
-        .append(
-          jQuery('<a></a>').attr('href', url).attr('target', '_blank').append(img)
-        );
-    }else{
-      return jQuery('<div></div>')
-         .addClass('flex-shrink-0 uploadicon')
-         .append(
-           jQuery('<a></a>').attr('href', url).attr('target', '_blank').append(img)
-         );
-    }
+  countFiles: function(){
+    return this.filelist.length;
   },
-  countFiles : function(){
-    // counts uploaded files, can be used by form validation
-    return jQuery('#' + this.uploader.filedivid).find('input').length;
-  },
-  addfiletolist: function(thumbnail, content){ // insert file in files list
-    var div = jQuery('<div></div>').addClass('flex-grow-1 ms-3').append(content);
-    jQuery('#' + this.uploader.filedivid).append(
-      jQuery('<div></div>')
-          .addClass('d-flex uploadres')
-          .append(thumbnail)
-          .append(div)
-    ).show();
-    if (!this.uploader.options.multiple){
-      this.uploader.uploaddiv.hide()
-    }
+  removefile: function(pos){
+    this.filelist.splice(pos, 1);
   },
   process: function(res){ //  process result of file uploader
     if (res.ok){
-      filenames = '';
+      let self = this;
       jQuery.each(res.files, function(i, file) { //processes each uploaded file
-        filenames += file.filename + ' ';
+        filecontainer = Object.create(self.uploader.options.filecontainer);
+        filecontainer.init(self);
+        if (res.info != undefined){
+          info = res.info;
+        }else{
+          info = null;
+        }
+        self.filelist[self.uploader.fileidx] = file;
+        jQuery('#' + self.uploader.filedivid).append(filecontainer.build(file, info));
+        self.uploader.fileidx++;
       });
-      hide = false;
-      if (!this.uploader.options.multiple){
-        hide = true
+      if (!self.uploader.options.multiple){
+        self.uploader.uploaddiv.hide();
       }
-      this.uploader.notify(
-        this.uploader.options.alertsuccessclass,
-        filenames + 'uploaded',
-        hide
-      );
     } else {
       this.uploader.notify(
         this.uploader.options.alerterrorclass,
         res.message
       );
     }
+  },
+  buildresdiv: function(id, myclass){
+    return jQuery('<div></div>')
+                    .attr('id', id)
+                    .addClass(myclass);
   }
 }
 
 /*builds uploader itself*/
 var Uploader = {
   url: null, // url of function
+  delurl: null,
+  resultbaseurl: null,
   div: null,
   uploaddiv : null,
 	divid: null, //id of table <div>
+  filediv: null,
   filedivid: null,
   upform: null,
   alertdiv: null,
@@ -143,7 +98,7 @@ var Uploader = {
   filepatterninput: null,
   storageinput: null,
   singleinput: null,
-  overwriteinput: null,
+  renameinput: null,
   maxsizeinput: null,
   mimesinput: null,
   form: null,
@@ -156,11 +111,12 @@ var Uploader = {
   path: null,
   filepattern: null,
   storagename: null,
-  overwrite:  null,
+  rename:  null,
   maxsize: null,
   mimes: null,
   additionalParams: null,
   resultprocessor: null,
+  fileidx: 0,
   init: function(element, url, options, additionalParams) { // init values
     this.url = url;
     this.div = jQuery(element);
@@ -173,9 +129,11 @@ var Uploader = {
     this.progressval = this.upform + '_progressval';
     this.options = options;
     this.path = this.options.path;
+    this.delurl = this.options.delurl;
+    this.resultbaseurl = this.options.resultbaseurl;
     this.filepattern = this.options.filepattern;
     this.storagename = this.options.storagename;
-    this.overwrite = this.options.overwrite ? 1 : 0;
+    this.rename = this.options.rename ? 1 : 0;
     this.maxsize = this.options.maxfilesizek;
     this.mimes = this.options.acceptable_mimes;
     this.additionalParams = additionalParams;
@@ -183,10 +141,13 @@ var Uploader = {
   },
   reset : function(){
     this.uploaddiv.show();
+    this.resultprocessor.filelist = [];
     jQuery('#' + this.filedivid).html('');
   },
   build: function(){ // builss uploader
     let self = this;
+    this.resultprocessor = Object.create(this.options.resultprocessor);
+    this.resultprocessor.init(this);
     this.progressbar = jQuery('<div></div>')
                     .addClass(this.options.progressbar)
                     .attr('id', this.progressid)
@@ -201,7 +162,7 @@ var Uploader = {
                     .append(this.progressbar);
     var zone = null;
     if (this.div.parents('form').length > 0){
-      zone = this.uploaddiv
+      zone = this.uploaddiv;
     }else{
       zone = jQuery('<form/>')
                     .attr('action', this.url)
@@ -255,10 +216,8 @@ var Uploader = {
     if (this.options.validfeedback.length > 0){
       this.uploaddiv.append(jQuery('<div/>').addClass('valid-feedback').html(this.options.validfeedback));
     }
-    if (this.options.buildresultdivfn != undefined){
-      var filesdiv = this.options.buildresultdivfn(this.filedivid);
-      filesdiv.insertAfter(this.uploaddiv);
-    }
+    this.filesdiv = this.resultprocessor.buildresdiv(this.filedivid, this.options.resultdivclass)
+    this.filesdiv.insertAfter(this.uploaddiv);
     if (this.options.draggable == true){
       jQuery("html").on("dragover, drop", function(e) { //prevent events
          e.preventDefault();
@@ -284,15 +243,13 @@ var Uploader = {
         formData.append('path', self.path);
         formData.append('filepattern', self.filepattern);
         formData.append('storagename', self.storagename);
-        formData.append('overwrite', self.overwrite);
+        formData.append('rename', self.rename);
         formData.append('maxsize', self.maxsize);
         formData.append('mimes', self.mimes);
         formData = self.setAdditionalData(formData);
         self.uploadaction(formData);
       });
     }
-    this.resultprocessor = Object.create(self.options.resultclass);
-    this.resultprocessor.init(this);
   },
   getresultprocessor: function(){ // gets result processor attached to uploader
     return this.resultprocessor;
@@ -307,8 +264,7 @@ var Uploader = {
     self.updateProgress(0);
     self.input.trigger('click');
   },
-  notify: function(alertclass, message, hide){ //notify results in alert div
-    if (hide == undefined) hide = false;
+  notify: function(alertclass, message){ //notify results in alert div
     this.alertdiv
         .removeClass()
         .addClass(alertclass)
@@ -317,9 +273,6 @@ var Uploader = {
     var self = this;
     var to = setTimeout(function() {
       self.alertdiv.hide();
-      if (hide){
-        self.uploaddiv.hide();
-      }
     }, this.options.alerttimeout);
   },
   beforeUploadSubmit: function(){ //check browser functions
@@ -336,8 +289,8 @@ var Uploader = {
   setfilepattern : function(pattern){
     this.filepattern = pattern;
   },
-  setoverwrite: function(val){
-    this.overwrite = val;
+  setrename: function(val){
+    this.rename = val;
   },
   setmaxsize: function(size){
     this.maxsize = size;
@@ -347,8 +300,14 @@ var Uploader = {
   },
   setAdditionalData: function(formData){ //sets data that can be sent to scripts
     if (this.additionalParams != null) {
-      for (key in this.additionalParams){
-        formData.append(key, this.additionalParams[key]);
+      if (this.options.additionalparamsfn != null) {
+        let paramsFn = this.options.additionalparamsfn();
+        myParams = jQuery.extend({}, this.additionalParams, paramsFn);
+      } else {
+        myParams = this.additionalParams;
+      }
+      for (key in myParams){
+        formData.append(key, myParams[key]);
       }
     }
     return formData;
@@ -365,7 +324,7 @@ var Uploader = {
     formData.append('path', self.path);
     formData.append('filepattern', self.filepattern);
     formData.append('storagename', self.storagename);
-    formData.append('overwrite', self.overwrite);
+    formData.append('rename', self.rename);
     formData.append('maxsize', self.maxsize);
     formData.append('mimes', self.mimes);
     formData = self.setAdditionalData(formData);
@@ -409,16 +368,24 @@ var Uploader = {
     })
     .done(function(res){ //send upload results to result processor
       self.getresultprocessor().process(res);
+      if (self.options.afteruploadfn != undefined){
+        self.options.afteruploadfn(res);
+      }
     })
     .fail(function(jqXHR){ //error processing
+      if (jqXHR.responseJSON != undefined && jqXHR.responseJSON.message != ''){
+        error = jqXHR.responseJSON.message;
+      }else{
+        error = self.options.failmessage;
+      }
       if (jqXHR.status == 419){
         self.refreshToken();
         self.uploadaction(formdata);
       }
       else if (self.options.errorfn != undefined){
-        self.options.errorfn(self.options.failmessage);
+        self.options.errorfn(error);
       }else{
-        self.notify(self.options.alerterrorclass, self.options.failmessage);
+        self.notify(self.options.alerterrorclass, error);
       }
     })
     .always(function(){ // resets progress bar

@@ -43,11 +43,11 @@ class Uploader{
 		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setmimes('". $mimes . "');";
 	}
 
-	public function setoverwrite($val){
+	public function setrename($val){
 		if (is_string($val)){
 			$val = $val  == 'true' ? true : false;
 		}
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setoverwrite(". (int)$val . ");";
+		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setrename(". (int)$val . ");";
 	}
 
 	public function setfilepattern($pattern){
@@ -74,7 +74,9 @@ class Uploader{
 		$sStr .= "jQuery('#" . $this->uploaderElement . "').uploader('" . $this->url;
 		$sStr .= "',{\nacceptable_mimes : '" . $this->aOptions['acceptable_mimes']. "',";
 		$sStr .= "\ncsrf : '" . $this->aOptions['csrf']. "',";
-		$sStr .= "\ncsrfrefreshroute: '" . $this->aOptions['csrfrefreshroute']. "',";
+		$sStr .= "\ncsrfrefreshroute: " . (is_null($this->aOptions['csrfrefreshroute']) ? 'null' : "'" . $this->aOptions['csrfrefreshroute'] . "'") . ",";
+		$sStr .= "\ndelurl: " . (is_null($this->aOptions['delurl']) ? 'null' : "'" . $this->aOptions['delurl'] . "'") . ",";
+		$sStr .= "\nresultbaseurl: " . (is_null($this->aOptions['resultbaseurl']) ? 'null' : "'" . $this->aOptions['resultbaseurl'] . "'") . ",";
 		$sStr .= "\nmultiple : " . ($this->aOptions['multiple'] ? 'true' : 'false') . ",";
 		$sStr .= "\nbuttonclass : '" . $this->aOptions['buttonclass']. "',";
 		$sStr .= "\ndraggable : " . ($this->aOptions['draggable'] ? 'true' : 'false') . ",";
@@ -84,7 +86,9 @@ class Uploader{
 		$sStr .= "\nuploadtext : '" . $this->translateOrPrint($this->aOptions['uploadtext']) . "',";
 		$sStr .= "\nprogbarmainclass : '" . $this->aOptions['progbarmainclass']. "',";
 		$sStr .= "\nprogressbar : '" . $this->aOptions['progressbar']. "',";
-		$sStr .= "\nbuildresultdivfn : " . $this->aOptions['buildresultdivfn']. ",";
+		$sStr .= "\nresultdivclass : '" . $this->aOptions['resultdivclass']. "',";
+		$sStr .= "\nadditionalparamsfn : " . (is_null($this->aOptions['additionalparamsfn']) ? 'null' : $this->aOptions['additionalparamsfn']) . ",";
+		$sStr .= "\nafteruploadfn : " . (is_null($this->aOptions['afteruploadfn']) ? 'null' : $this->aOptions['afteruploadfn']) . ",";
 		$sStr .= "\nvalidfeedback : '" . $this->translateOrPrint($this->aOptions['valid-feedback']) . "',";
 		$sStr .= "\ninvalidfeedback : '" . $this->translateOrPrint($this->aOptions['invalid-feedback']) . "',";
 		$sStr .= "\nalerterrorclass : '" . $this->aOptions['alerterrorclass']. "',";
@@ -93,17 +97,16 @@ class Uploader{
 		$sStr .= "\npath : '" . $this->aOptions['path']. "',";
 		$sStr .= "\nfilepattern: '" . $this->aOptions['filepattern']. "',";
 	  $sStr .= "\nstoragename: '" . $this->aOptions['storagename']. "',";
-	  $sStr .= "\noverwrite: " . ($this->aOptions['overwrite'] ? 'true' : 'false') . ",";
+	  $sStr .= "\nrename: " . ($this->aOptions['rename'] ? 'true' : 'false') . ",";
 	  $sStr .= "\nmaxfilesizek: " . (is_null($this->aOptions['maxfilesizek']) ? 'null' : $this->aOptions['maxfilesizek']) . ",";
 		$sStr .= "\nfailmessage : '" . $this->translateOrPrint($this->aOptions['failmessage']) . "',";
-		$sStr .= "\nresultclass : " . $this->aOptions['resultclass'];// . "'";
+		$sStr .= "\ndelmessage : '" . $this->translateOrPrint($this->aOptions['delete']) . "',";
+		$sStr .= "\nresultprocessor : " . $this->aOptions['resultprocessor'] . ",";// . "'";
+		$sStr .= "\nfilecontainerclass : '" . $this->aOptions['filecontainerclass'] .  "',";
+		$sStr .= "\nfilecontainer : " . $this->aOptions['filecontainer'];
 		if (isset($this->aOptions['errorfn'])) {
 				$sStr .= ",\nerrorfn : " . $this->aOptions['errorfn'];
 		}
-		if (isset($this->aOptions['buildresultdivfn'])) {
-				$sStr .= ",\nbuildresultdivfn : " . $this->aOptions['buildresultdivfn'];
-		}
-
     $sStr .= "\n},{\n";
 		$params = '';
 		foreach($this->additionalParams as $key => $value){
