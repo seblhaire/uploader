@@ -2,6 +2,7 @@
 return [
   'draggable' => true,
   'hidden' => false,
+  'hiddenuploader' => false,
   'multiple' => false,
   'maindiv' => 'mb-3',
   'uploadzoneclass' => 'uploadzone',

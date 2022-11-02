@@ -21,51 +21,74 @@ class Uploader{
 		]);;
 		$this->additionalParams = $additionalParams;
 	}
+	public function getUploader(){
+		return "jQuery('#" . $this->uploaderElement . "').data('uploader')";
+	}
 
 	public function setPath($path, $is_string = true)
 	{
 			if ($is_string){
-				return "jQuery('#" . $this->uploaderElement . "').data('uploader').setpath('" . $path . "');";
+				return $this->getUploader() . ".setpath('" . $path . "');";
 			}else{
-				return "jQuery('#" . $this->uploaderElement . "').data('uploader').setpath(" . $path . ");";
+				return $this->getUploader() . ".setpath(" . $path . ");";
 			}
 	}
 
   public function setstoragename($storagename){
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setstoragename('" . $storagename . "');";
+		return $this->getUploader() . ".setstoragename('" . $storagename . "');";
 	}
 
 	public function setmaxsize($size){
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setmaxsize(". $size . ");";
+		return $this->getUploader() . ".setmaxsize(". $size . ");";
 	}
 
 	public function setmimes($mimes){
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setmimes('". $mimes . "');";
+		return $this->getUploader() . ".setmimes('". $mimes . "');";
 	}
 
 	public function setrename($val){
 		if (is_string($val)){
 			$val = $val  == 'true' ? true : false;
 		}
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setrename(". (int)$val . ");";
+		return $this->getUploader() . ".setrename(". (int)$val . ");";
 	}
 
 	public function setfilepattern($pattern){
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').setfilepattern('". $pattern . "');";
+		return $this->getUploader() . ".setfilepattern('". $pattern . "');";
+	}
+
+	public function showall(){
+		return $this->getUploader() . ".showall();";
+	}
+
+	public function showuploader(){
+		return $this->getUploader() . ".showuploader();";
+	}
+
+	public function hideall(){
+		return $this->getUploader() . ".hideall();";
+	}
+
+	public function hideuploader(){
+		return $this->getUploader() . ".hideuploader();";
+	}
+
+	public function toggleall(){
+		return $this->getUploader() . ".toggleall();";
+	}
+
+	public function toggleuploader(){
+		return $this->getUploader() . ".toggleuploader();";
 	}
 
 	public function getresultprocessor(){
-		return "jQuery('#" . $this->uploaderElement . "').data('uploader').getresultprocessor();";
+		return $this->getUploader() . ".getresultprocessor();";
 	}
-
 
 	public function output(){
 		$sStr =  '<div id="' . $this->uploaderElement . '" class="' . $this->aOptions['maindiv'] . '">' . PHP_EOL;
-		$sStr .= '<label class="' .  $this->aOptions['labelclass']  . '">' . $this->label . '</label>' . PHP_EOL;
+		$sStr .= '<label id="' . $this->uploaderElement . '-label" class="' .  $this->aOptions['labelclass']  . '">' . $this->label . '</label>' . PHP_EOL;
     $sStr .= '<div id="' . $this->uploaderElement . '-zone" class="' . $this->aOptions['uploadzoneclass'] . '"';
-		if ($this->aOptions['hidden']){
-			$sStr .= ' style="display:none"';
-		}
 		$sStr .= '>';
 		$sStr .= '</div>' . PHP_EOL;
 		$sStr .= '</div>' . PHP_EOL;
@@ -73,6 +96,8 @@ class Uploader{
 		$sStr .= "jQuery(document).ready(function(){\ntry{\n";
 		$sStr .= "jQuery('#" . $this->uploaderElement . "').uploader('" . $this->url;
 		$sStr .= "',{\nacceptable_mimes : '" . $this->aOptions['acceptable_mimes']. "',";
+		$sStr .= "\nhidden : " . ($this->aOptions['hidden'] ? 'true' : 'false') . ",";
+		$sStr .= "\nhiddenuploader : " . ($this->aOptions['hiddenuploader'] ? 'true' : 'false') . ",";
 		$sStr .= "\ncsrf : '" . $this->aOptions['csrf']. "',";
 		$sStr .= "\ncsrfrefreshroute: " . (is_null($this->aOptions['csrfrefreshroute']) ? 'null' : "'" . $this->aOptions['csrfrefreshroute'] . "'") . ",";
 		$sStr .= "\ndelurl: " . (is_null($this->aOptions['delurl']) ? 'null' : "'" . $this->aOptions['delurl'] . "'") . ",";

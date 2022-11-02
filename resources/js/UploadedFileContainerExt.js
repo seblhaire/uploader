@@ -123,10 +123,9 @@ UploadedFileContainerExt = {
               })
               .done(function(result){ //send upload results to result processor
                 jQuery('#' + id + '_del').parents('div.uploadres').remove();
-                e.data.uploader.uploaddiv.show();
                 e.data.filecont.processor.removefile(e.data.filecont.idx);
                 if (!e.data.uploader.options.multiple){
-                  e.data.uploader.uploaddiv.show();
+                  e.data.uploader.showall();
                 }
               });
             }

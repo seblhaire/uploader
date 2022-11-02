@@ -64,7 +64,7 @@ UploadresultProcessor = {
         self.uploader.fileidx++;
       });
       if (!self.uploader.options.multiple){
-        self.uploader.uploaddiv.hide();
+        self.uploader.hideuploader();
       }
     } else {
       this.uploader.notify(
@@ -122,6 +122,7 @@ var Uploader = {
     this.div = jQuery(element);
     this.divid = this.div.attr('id');
     this.uploaddiv = jQuery('#' + this.divid + '-zone');
+    this.uploadlabel = jQuery('#' + this.divid + '-label');
     this.filedivid = this.divid +'_filesdiv';
     this.upform = this.divid + '_uploadform';
     this.alertdivid = this.divid + '_alert';
@@ -137,17 +138,17 @@ var Uploader = {
     this.maxsize = this.options.maxfilesizek;
     this.mimes = this.options.acceptable_mimes;
     this.additionalParams = additionalParams;
+    this.resultprocessor = Object.create(this.options.resultprocessor);
+    this.resultprocessor.init(this);
     this.build();
   },
   reset : function(){
-    this.uploaddiv.show();
+    this.initdivs()
     this.resultprocessor.filelist = [];
     jQuery('#' + this.filedivid).html('');
   },
   build: function(){ // builss uploader
     let self = this;
-    this.resultprocessor = Object.create(this.options.resultprocessor);
-    this.resultprocessor.init(this);
     this.progressbar = jQuery('<div></div>')
                     .addClass(this.options.progressbar)
                     .attr('id', this.progressid)
@@ -249,6 +250,51 @@ var Uploader = {
         formData = self.setAdditionalData(formData);
         self.uploadaction(formData);
       });
+    }
+    this.initdivs();
+  },
+  initdivs: function(){
+    if (this.options.hidden){
+      this.hideall();
+    }else if (this.options.hiddenuploader){
+      this.hideuploader();
+    }else{
+      this.showall();
+    }
+  },
+  showall: function(){
+    this.uploaddiv.show();
+    this.uploadlabel.show();
+  },
+  showuploader: function(){
+    this.showall();
+  },
+  hideall: function(){
+    this.uploaddiv.hide();
+    this.uploadlabel.hide();
+  },
+  hideuploader: function(){
+    this.showall();
+    this.uploaddiv.hide();
+  },
+  uploadervisible: function(){
+    return this.hideuploader.is(":visible");
+  },
+  allvisible: function(){
+    return this.uploaddiv.is(":visible") && this.uploadlabel.is(":visible");
+  },
+  toggleall: function(){
+    if (this.allvisible()){
+        this.hideall();
+    } else{
+        this.showall();
+    }
+  },
+  toggleuploader: function(){
+    if (this.uploadervisible()){
+      this.hideuploader();
+    }else{
+      this.showuploader();
     }
   },
   getresultprocessor: function(){ // gets result processor attached to uploader

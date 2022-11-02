@@ -7,3 +7,5 @@ February 2022
 
 October 2022
 4.0 Uploader with new file processor
+
+4.0.1 add show / hide functions

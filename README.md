@@ -113,7 +113,8 @@ where:
     *  `'multiple'` : users can upload several files. Default `false`.
     * `'maindiv'` ; div class for main div. Default: `'mb-3'`.
     * `'draggable'`: sets drag and drop option. Default `true`.
-    * `'hidden'`: hide uploader at beginning. Default `false`.
+    * `'hidden'`: hide whole uploader at beginning. Default `false`.
+    * `'hiddenuploader'`: hide uploader at beginning but still display label. Default `false`.
     * `'uploadzoneclass'`: class of main uploader div. Default `'uploadzone'`.
     * `'acceptable_mimes'`: comma-separated list of file extensions allowed.
     * `'droptext'`:  text to be displayed in drop zone. Text can be string or translation key. Cf [below](#translation_keys).
@@ -149,6 +150,12 @@ where:
 * `$additionalParams`: array of parameters to be sent to routes.
 
 Uploader sends data to a controller (see [below](#controller)) which accepts parameters to set filename, file systems storage name and file path. Since these values are usually set dynamically, Uploader Javascript object provides methods to set them;  the PHP object built by our Facade provides methods to insert Javascript code properly, for instance in Ajax scripts.
+
+### Get uploader
+
+`getUploader()`
+
+Prints javascript code to get uploader class.
 
 ### Set path name
 
@@ -194,6 +201,37 @@ After upload success, Uploader returns a Result processor, which is a Javascript
 
 
 `var proc = {!! $uploader->getresultprocessor() !!};`
+
+### Show uploader
+
+`showall()`
+
+Displays uploader entirely if parts or whole have been hidden.
+
+`showuploader()`
+
+Displays uploader button and zone if has been hidden.
+
+### Hide uploader completely
+
+`hideall()`
+
+Hides uploader zone and uploader label.
+
+`hideuploader()`
+
+Hides uploader zone
+
+
+### Toggle display
+
+`toggleall()`
+
+If whole uploader is visible, hide it, show it if hidden.
+
+`toggleuploader()`
+
+If uploader zone is visible, hide it, show it if hidden.
 
 ### Summary
 
