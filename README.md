@@ -194,6 +194,12 @@ Accepts a string of accepted, comma-separated, file extensions.
 
 Defines if we rename current file if a file with same name already exists in upload directory. Accepts boolean variable or string `'true'` or `'false'`.
 
+### Reset uploader
+
+`reset()`
+
+empties files list.
+
 ### Get result processor
 `getresultprocessor()`
 

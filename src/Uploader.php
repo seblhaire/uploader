@@ -25,6 +25,10 @@ class Uploader{
 		return "jQuery('#" . $this->uploaderElement . "').data('uploader')";
 	}
 
+	public function reset(){
+		return $this->getUploader() . ".reset();";
+	}
+
 	public function setPath($path, $is_string = true)
 	{
 			if ($is_string){
