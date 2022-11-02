@@ -11,6 +11,10 @@
 .targetted{
   border: 2px dashed red;
 }
+.uploaderresultbtn{
+  margin-left:4px;
+  cursor:pointer;
+}
 
 .uploadimg {
   max-width:80px;
