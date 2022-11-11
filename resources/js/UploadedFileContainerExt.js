@@ -132,12 +132,17 @@ UploadedFileContainerExt = {
           });
     var p = jQuery('<p></p>');
     if (fileobj.file_id !=  undefined){
+      var returnid =  fileobj.file_id;
       p.html('#id: ' + fileobj.file_id);
+    }else{
+      var returnid = i;
     }
     p.append(cpbtn)
         .append(delbtn)
+    var input = jQuery('<input/>').attr('type', 'hidden').attr('name', this.processor.uploader.divid + "[" + i + "]").val(returnid);
     return jQuery('<div></div>')
         .append(jQuery('<h5></h5>').addClass('mt-0 mb-1').html(fileobj.filename))
+        .append(input)
         .append(p);
   }
 }
