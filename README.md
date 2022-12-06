@@ -141,7 +141,6 @@ where:
     * `'filecontainerclass'` : file container class. Default: `'d-flex uploadres'`.
     * `'errorfn'`: function to process  file upload error if you don't want to use default one. Function name or null. Default `null`.
     *  `'resultdivclass'` : class of file list container. Default: `'uploadresdiv'`-
-    * `'csrfrefreshroute'`: route to a function that refreshes csrf token.
     * `'delurl'`: route to file delete controller function that can be called in file results. Default: `null`.
     * `'resultbaseurl'`: base url used to build urls. Default: `null`.
     * `'additionalparamsfn'`: function that adds parameters to upload function. Default: `null`.

@@ -31,7 +31,6 @@ return [
   'filecontainerclass' => 'd-flex uploadres',
   'errorfn' => null,
   'resultdivclass' => 'uploadresdiv',
-  'csrfrefreshroute' => null,
   'delurl' => null,
   'resultbaseurl' => null,
   'additionalparamsfn' => null,

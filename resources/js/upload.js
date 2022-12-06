@@ -376,14 +376,6 @@ var Uploader = {
     formData = self.setAdditionalData(formData);
     self.uploadaction(formData);
   },
-  refreshToken: function (){
-		var self = this;
-    if (self.options.csrfrefreshroute != null){
-	    jQuery.get(self.options.csrfrefreshroute, function(data){
-	        self.options.csrf = data;
-	    });
-    }
-	},
   uploadaction: function(formdata){ //send file to upload route
     var self = this;
     jQuery.ajax({
@@ -425,8 +417,7 @@ var Uploader = {
         error = self.options.failmessage;
       }
       if (jqXHR.status == 419){
-        self.refreshToken();
-        self.uploadaction(formdata);
+        location.reload();
       }
       else if (self.options.errorfn != undefined){
         self.options.errorfn(error);

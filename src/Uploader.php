@@ -103,7 +103,6 @@ class Uploader{
 		$sStr .= "\nhidden : " . ($this->aOptions['hidden'] ? 'true' : 'false') . ",";
 		$sStr .= "\nhiddenuploader : " . ($this->aOptions['hiddenuploader'] ? 'true' : 'false') . ",";
 		$sStr .= "\ncsrf : '" . $this->aOptions['csrf']. "',";
-		$sStr .= "\ncsrfrefreshroute: " . (is_null($this->aOptions['csrfrefreshroute']) ? 'null' : "'" . $this->aOptions['csrfrefreshroute'] . "'") . ",";
 		$sStr .= "\ndelurl: " . (is_null($this->aOptions['delurl']) ? 'null' : "'" . $this->aOptions['delurl'] . "'") . ",";
 		$sStr .= "\nresultbaseurl: " . (is_null($this->aOptions['resultbaseurl']) ? 'null' : "'" . $this->aOptions['resultbaseurl'] . "'") . ",";
 		$sStr .= "\nmultiple : " . ($this->aOptions['multiple'] ? 'true' : 'false') . ",";
