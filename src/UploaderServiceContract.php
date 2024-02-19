@@ -1,7 +1,8 @@
-<?php namespace Seblhaire\Uploader;
+<?php
 
-interface UploaderServiceContract{
+namespace Seblhaire\Uploader;
 
-	public function init($uploaderElement, $label, $url,  $options = array(), $additionalParams = array());
+interface UploaderServiceContract {
 
+    public function init($uploaderElement, $label, $url, $options = array(), $additionalParams = array());
 }
