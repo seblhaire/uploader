@@ -11,6 +11,7 @@ It uses:
 * a Javascript table builder based on [jQuery](https://jquery.com/) Javascript framework.
 * [Bootstrap](https://getbootstrap.com/) 5 CSS Framework.
 * [FontAwesome](https://fontawesome.com/) icons
+* [ClipboardJS](https://clipboardjs.com/) package
 
 ![Uploader example image](uploader.png)
 
@@ -58,7 +59,7 @@ On a webpage, every JS library and CSS stylesheets can be linked separately. If 
 But websites often use many libraries and stylesheets and browser must download many files before the site can be rendered properly. Modern websites come with a single compressed Javascript file which concatenates necessary scripts; same principle for stylesheets. With Laravel you can use [Laravel Mix](https://github.com/JeffreyWay/laravel-mix) to compile files.
 
 Use [NPM](https://www.npmjs.com/) package manager :
-`npm install bootstrap jquery @fortawesome/fontawesome-free`
+`npm install bootstrap jquery clipboard @fortawesome/fontawesome-free`
 
 Then your js source file should be something like this:
 
@@ -69,6 +70,7 @@ var jQuery = global.JQuery;
 window.$ = $;
 window.jQuery = jQuery;
 require('bootstrap');
+global.Clipboard = require('clipboard');
 require('../../vendor/seblhaire/uploader/resources/js/uploader.js');
 require('../../vendor/seblhaire/uploader/resources/js/UploadedFileContainerExt.js');
 ```
